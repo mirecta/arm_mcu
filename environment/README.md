@@ -31,7 +31,7 @@ tar xvf STM32Cube_FW_F4_V1.3.0.tar.bz2
 ```
 
 For every project (without HAL libraries, only low level)
-=========================================================
+---------------------------------------------------------
 
 Copy startup code into your project (it depends which mcu u have in my case startup_stm32f411xe.s) 
 ```
@@ -53,7 +53,7 @@ cp <stm32f4_loc>/STM32Cube_FW_F4_V1.3.0/Projects/STM32F411RE-Nucleo/Templates/Tr
 This linker script tells to linker vdere is data and program section , where is reset handler.
 
 ST-Link
-=====================
+--------------
 Build and install
 ```
 tar xvf stlink.tar.bz2 
@@ -75,7 +75,7 @@ if not work  u can try add sudo , if sudo works, there are sam problem with udev
 
 
 Prepare VIM (optional)
-======================
+----------------------
 Create some folders
 ```
 mkdir ~/.vim/tags/
