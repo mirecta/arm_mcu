@@ -30,8 +30,8 @@ cd <stm32f4_loc>
 tar xvf STM32Cube_FW_F4_V1.3.0.tar.bz2
 ```
 
-For every project
-==================
+For every project (without HAL libraries, only low level)
+=========================================================
 
 Copy startup code into your project (it depends which mcu u have in my case startup_stm32f411xe.s) 
 ```
@@ -51,6 +51,28 @@ Copy linker script into your projects (it depends which mcu u have in my case  S
 cp <stm32f4_loc>/STM32Cube_FW_F4_V1.3.0/Projects/STM32F411RE-Nucleo/Templates/TrueSTUDIO/STM32F4xx-Nucleo/STM32F411RE_FLASH.ld ./
 ```
 This linker script tells to linker vdere is data and program section , where is reset handler.
+
+ST-Link
+=====================
+Build and install
+```
+tar xvf stlink.tar.bz2 
+cd stlink
+make 
+sudo make install
+```
+Add stlink to udev 
+```
+sudo cp  49-stlinkv*.rules /etc/udev/rules.d/
+sudo /etc/init.d/udev reload
+```
+Test 
+```
+st-flash read dump.bin  0x8000000 256
+
+```
+if not work  u can try add sudo , if sudo works, there are sam problem with udev :)
+
 
 Prepare VIM (optional)
 ======================
@@ -76,3 +98,5 @@ unzip omnicppcomplete-0.41.zip
 and use my config ... 
 
 good luck
+
+PS: u must read stm32f4_developer_datasheet.pdf :D
