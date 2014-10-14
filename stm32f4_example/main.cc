@@ -62,10 +62,10 @@ int main() {
     //enable interrupt
     NVIC_EnableIRQ(TIM2_IRQn);
 
-    TIM2->PSC = 0x0; // no prescaler, timer counts up in sync with the peripheral clock
+    TIM2->PSC = 0x0; // no prescaler, timer counts up in max speed
     TIM2->DIER |= TIM_DIER_UIE; // enable update interrupt
-    TIM2->ARR = 25000000; // count to 1 (autoreload value 1)
-    TIM2->CR1 |= TIM_CR1_ARPE | TIM_CR1_CEN | TIM_CR1_URS; // autoreload on, counter enabled
+    TIM2->ARR = 25000000; // count to this value
+    TIM2->CR1 |= TIM_CR1_ARPE | TIM_CR1_CEN | TIM_CR1_URS; // autoreload on, counter enabled, event only in owerflow or auto reload
     TIM2->EGR = TIM_EGR_UG; // trigger update event to reload timer registers
 
   while(1);
