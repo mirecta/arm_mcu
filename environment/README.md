@@ -81,7 +81,7 @@ Prepare VIM (optional)
 ----------------------
 Create some folders
 ```
-mkdir ~/.vim/tags/
+mkdir -p ~/.vim/tags/
 ```
 Create tags
 ```
