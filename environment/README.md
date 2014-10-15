@@ -58,6 +58,7 @@ Build and install
 ```
 tar xvf stlink.tar.bz2 
 cd stlink
+./autogen.sh
 make 
 sudo make install
 ```
