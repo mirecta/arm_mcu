@@ -21,7 +21,7 @@ change path to <arm_toolchain_loc>
 ```
 and move file into /etc/profile.d (as root of course :))
 ```
-mv arm_toolchain.sh /etc/profile.d
+sudo mv arm_toolchain.sh /etc/profile.d
 ```
 
 next unpack stm32f4 cube libs into stm32f4_loc
