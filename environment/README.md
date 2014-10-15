@@ -91,13 +91,6 @@ ctags -R --sort=yes --c++-kinds=+p --fields=+iaS --extra=+q --language-force=C++
 ctags -R --sort=yes --c++-kinds=+p --fields=+iaS --extra=+q --language-force=C++ -f arm_core <arm_toolchain_loc>/STM32Cube_FW_F4_V1.3.0/Drivers/CMSIS/Include
 
 ```
-Install omni plugin
-```
-mkdir ~/.vim/plugin
-cd ~/.vim/plugin
-unzip omnicppcomplete-0.41.zip
-```
-
 and use my config ... 
 
 good luck
