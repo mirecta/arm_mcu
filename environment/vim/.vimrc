@@ -28,7 +28,7 @@ map <F2> :if &modifiable && !&readonly && &modified <CR> :w<CR> :endif<CR> :bpre
 
 " F3 - Next buffer
 map <F3> :if &modifiable && !&readonly && &modified <CR> :w<CR> :endif<CR> :bnext<cr>
-
+set statusline=%<%f%h%m%r%=%b\ 0x%B\ \ %l,%c%V\ %P
 set nocp
 filetype plugin on
 " configure tags - add additional tags here or comment out not-used ones
