@@ -1,92 +1,100 @@
-# Name: Makefile
-# Project: hid-mouse example
-# Author: Christian Starkjohann
-# Creation Date: 2008-04-07
-# Tabsize: 4
-# Copyright: (c) 2008 by OBJECTIVE DEVELOPMENT Software GmbH
-# License: GNU GPL v2 (see License.txt), GNU GPL v3 or proprietary (CommercialLicense.txt)
-# This Revision: $Id: Makefile 692 2008-11-07 15:07:40Z cs $
 
-DEVICE  = STM32F411xE
+BUILD_DIR:=build
+DEVICE := STM32F411xE
 
-FLASH = sudo st-flash
+CUBE_DRV_PATH := /home/miro/agct/STM32Cube_FW_F4_V1.3.0/Drivers/
+HAL_PATH :=  ${CUBE_DRV_PATH}/STM32F4xx_HAL_Driver
 
-CFLAGS  = 
-OBJECTS = startup_stm32f411xe.o system.o main.o
-DEPS = $(OBJECTS:.o=.d)
+#MODULES := $(HAL_PATH)/Src/
+NODULES:=
+SRC:= $(wildcard *.c *.cc *.s)
+SRC += $(foreach sdir,$(MODULES),$(wildcard $(sdir)/*.c $(sdir)/*.cc $(sdir)/*.s))
 
-COMPILE = arm-none-eabi-gcc -mcpu=cortex-m4 -Os -mlittle-endian -mthumb -mthumb-interwork -Wall -D${DEVICE} -I/home/miro/agct/STM32Cube_FW_F4_V1.3.0/Drivers/CMSIS/Device/ST/STM32F4xx/Include -I/home/miro/agct/STM32Cube_FW_F4_V1.3.0/Drivers/CMSIS/Include
+OBJ:= $(patsubst %.c,%.o,$(SRC))
+OBJ:= $(patsubst %.cc,%.o,$(OBJ))
+OBJ:= $(patsubst %.s,%.o,$(OBJ))
+OBJ:= $(patsubst %.o, build/%.o, $(notdir $(OBJ)))
+VPATH:=$(MODULES)
 
-all: hex bin
+CFLAGS := -mcpu=cortex-m4 -Os -mlittle-endian -mthumb -mthumb-interwork -Wall -D${DEVICE}
+CFLAGS += -I. -I ${CUBE_DRV_PATH}/CMSIS/Device/ST/STM32F4xx/Include -I ${CUBE_DRV_PATH}/CMSIS/Include 
+CFLAGS += -I ${HAL_PATH}/Inc
+LDFLAGS := -Wl,--gc-sections -TSTM32F411RE_FLASH.ld
+
+DEPS = $(OBJ:.o=.d)
+
+CC := arm-none-eabi-gcc 
+OBJCOPY := arm-none-eabi-objcopy
+OBJDUMP := arm-none-eabi-objdump
+
+FLASH := sudo st-flash
+
+
+
+all: checkdirs hex bin
+	@echo $(DEPS)
 
 # symbolic targets:
 help:
 	@echo "This Makefile has no default rule. Use one of the following:"
 	@echo "make hex ....... to build main.hex"
 	@echo "make program ... to flash fuses and firmware"
-	@echo "make fuse ...... to flash the fuses"
 	@echo "make flash ..... to flash the firmware (use this on metaboard)"
 	@echo "make clean ..... to delete objects and hex file"
 
-hex: main.hex 
+hex: $(BUILD_DIR)/main.hex 
 
-bin: main.bin
+bin: $(BUILD_DIR)/main.bin
 
-program: flash fuse
 
 # rule for uploading firmware:
-flash: main.bin
-	$(FLASH) --reset write main.bin  0x8000000
+flash: $(BUILD_DIR)/main.bin
+	$(FLASH) --reset write $(BUILD_DIR)/main.bin  0x8000000
 
-fuses:
-	$(AVRDUDE) -U lfuse:w:0x94:m -U hfuse:w:0xd9:m
-
-# rule for deleting dependent files (those which can be built by Make):
-clean:
-	rm -f main.bin  main.hex main.lst main.obj main.cof main.list main.map main.eep.hex main.elf *.o *.d 
 
 # Generic rule for compiling C files:
-%.o: %.c
-	$(COMPILE) -c $< -o $@
-	$(COMPILE) -MM $*.c > $*.d 
+$(BUILD_DIR)/%.o: %.c
+	$(CC) $(CFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) -MM $< > $(BUILD_DIR)/$*.d 
 
-%.o: %.cc
-	$(COMPILE) -c $< -o $@
-	$(COMPILE) -MM $*.cc > $*.d 
+$(BUILD_DIR)/%.o: %.cc
+	$(CC) $(CFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) -MM $< > $(BUILD_DIR)/$*.d 
     
 # Generic rule for assembling Assembler source files:
-%.o: %.s
-	$(COMPILE)    -c $< -o $@
-# "-x assembler-with-cpp" should not be necessary since this is the default
-# file type for the .S (with capital S) extension. However, upper case
-# characters are not always preserved on Windows. To ensure WinAVR
-# compatibility define the file type manually.
+$(BUILD_DIR)/%.o: %.s
+	$(CC) $(CFLAGS)  -c $< -o $@
+	$(CC) $(CFLAGS) -MM $< > $(BUILD_DIR)/$*.d 
 
-# Generic rule for compiling C to assembler, used for debugging only.
-.c.s:
-	$(COMPILE) -S $< -o $@
 
 # file targets:
 
 
-main.elf:  $(OBJECTS)	# usbdrv dependency only needed because we copy it
-	$(COMPILE)  -Wl,--gc-sections -TSTM32F411RE_FLASH.ld -o main.elf $(OBJECTS)
+$(BUILD_DIR)/main.elf:  $(OBJ)	
+	$(CC)  $(LDFLAGS)  -o $(BUILD_DIR)/main.elf $(OBJ)
 
-main.hex: main.elf
-	rm -f main.hex main.eep.hex
-	arm-none-eabi-objcopy -Oihex main.elf main.hex
+$(BUILD_DIR)/main.hex: $(BUILD_DIR)/main.elf
+	rm -f $(BUILD_DIR)/main.hex $(BUILD_DIR)/main.eep.hex
+	$(OBJCOPY) -Oihex $(BUILD_DIR)/main.elf $(BUILD_DIR)/main.hex
 
-main.bin: main.elf
-	rm -f main.bin
-	arm-none-eabi-objcopy  -Obinary main.elf main.bin
+$(BUILD_DIR)/main.bin: $(BUILD_DIR)/main.elf
+	rm -f $(BUILD_DIR)/main.bin
+	$(OBJCOPY)  -Obinary $(BUILD_DIR)/main.elf $(BUILD_DIR)/main.bin
 
 # debugging targets:
 
-disasm:	main.elf
-	arm-none-eabi-objdump -S main.elf
+disasm:	$(BUILD_DIR)/main.elf
+	$(OBJDUMP) -S $(BUILD_DIR)/main.elf
 
-cpp:
-	$(COMPILE) -E main.c
+
+checkdirs:$(BUILD_DIR)
+
+
+$(BUILD_DIR):
+	@mkdir -p $@
+
+clean:
+	@rm -rf $(BUILD_DIR)
 
 
 -include	$(DEPS)
