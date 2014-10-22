@@ -1,7 +1,7 @@
 Environment
 ===========
 
-First of all unpack arm toolchain to your location
+First of all unpack [arm toolchain](https://launchpad.net/gcc-arm-embedded) to your location
 
 ```
 cd <arm_toolchain_loc>
@@ -53,8 +53,8 @@ cp <stm32f4_loc>/STM32Cube_FW_F4_V1.3.0/Projects/STM32F411RE-Nucleo/Templates/Tr
 ```
 This linker script tells to linker vdere is data and program section , where is reset handler.
 
-ST-Link
---------------
+[ST-Link](https://github.com/texane/stlink)
+------------------------------------------
 Build and install
 ```
 tar xvf stlink.tar.bz2 
