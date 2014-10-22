@@ -1,3 +1,20 @@
-```
-ctags -R --sort=yes --c++-kinds=+p --fields=+iaS --extra=+q --language-force=C++ -f .vim/tags/stm32f4HAL /home/miro/agct/STM32Cube_FW_F4_V1.3.0/Drivers/STM32F4xx_HAL_Driver/Inc/
-```
+HAL example
+===========
+
+**Several files was coppied from  templates:**
+
+File | Decription
+-----|-----------
+**system_stm32f4xx.c** | This file contains SystemInit() which is called at startup just after reset and
+before branching to the main program. It does not configure the system
+clock at startup (contrary to the standard library). This is to be done using
+the HAL APIs in the user files.
+It allows to :
+
+- relocate the vector table in internal SRAM.
+
+- configure FSMC/FMC peripheral (when available) to use as
+data memory the external SRAM or SDRAM mounted on the
+evaluation board.
+
+
