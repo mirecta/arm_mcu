@@ -7,6 +7,11 @@ HAL_PATH :=  ${CUBE_DRV_PATH}/STM32F4xx_HAL_Driver
 
 #MODULES := $(HAL_PATH)/Src/
 NODULES:=
+INCLUDES:= ${HAL_PATH}/Inc ${CUBE_DRV_PATH}/CMSIS/Device/ST/STM32F4xx/Include ${CUBE_DRV_PATH}/CMSIS/Include
+
+
+INCLUDES += . $(MODULES)
+
 SRC:= $(wildcard *.c *.cc *.s)
 SRC += $(foreach sdir,$(MODULES),$(wildcard $(sdir)/*.c $(sdir)/*.cc $(sdir)/*.s))
 
@@ -17,8 +22,7 @@ OBJ:= $(patsubst %.o, build/%.o, $(notdir $(OBJ)))
 VPATH:=$(MODULES)
 
 CFLAGS := -mcpu=cortex-m4 -Os -mlittle-endian -mthumb -mthumb-interwork -Wall -D${DEVICE}
-CFLAGS += -I. -I ${CUBE_DRV_PATH}/CMSIS/Device/ST/STM32F4xx/Include -I ${CUBE_DRV_PATH}/CMSIS/Include 
-CFLAGS += -I ${HAL_PATH}/Inc
+CFLAGS += $(addprefix -I ,$(INCLUDES))
 LDFLAGS := -Wl,--gc-sections -TSTM32F411RE_FLASH.ld
 
 DEPS = $(OBJ:.o=.d)
