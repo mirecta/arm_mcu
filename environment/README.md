@@ -79,17 +79,14 @@ if not work  u can try add sudo , if sudo works, there are sam problem with udev
 
 Prepare VIM (optional)
 ----------------------
-Create some folders
+Edit ctags.sh and set your path to stm cube, then run it
 ```
-mkdir -p ~/.vim/tags/
+./ctags.sh
 ```
-Create tags
+Add this lines to your .vimrc
 ```
-cd ~/.vim/tags
-
-ctags -R --sort=yes --c++-kinds=+p --fields=+iaS --extra=+q --language-force=C++ -f stm32f4 <arm_toolchain_loc>/STM32Cube_FW_F4_V1.3.0/Drivers/CMSIS/Device/ST/STM32F4xx/Include
-ctags -R --sort=yes --c++-kinds=+p --fields=+iaS --extra=+q --language-force=C++ -f arm_core <arm_toolchain_loc>/STM32Cube_FW_F4_V1.3.0/Drivers/CMSIS/Include
-
+autocmd FileType c setlocal tags+=~/.vim/tags/arm
+autocmd FileType cpp setlocal tags+=~/.vim/tags/arm
 ```
 and use my config ... 
 
