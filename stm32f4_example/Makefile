@@ -2,18 +2,19 @@
 BUILD_DIR:=build
 DEVICE := STM32F411xE
 
-CUBE_DRV_PATH := /home/miro/agct/STM32Cube_FW_F4_V1.3.0/Drivers/
+CUBE_DRV_PATH := /home/miro/agct/STM32Cube_FW_F4_V1.3.0/Drivers
 HAL_PATH :=  ${CUBE_DRV_PATH}/STM32F4xx_HAL_Driver
 
-#MODULES := $(HAL_PATH)/Src/
-NODULES:=
-INCLUDES:= ${HAL_PATH}/Inc ${CUBE_DRV_PATH}/CMSIS/Device/ST/STM32F4xx/Include ${CUBE_DRV_PATH}/CMSIS/Include
-
+#MODULES := src $(HAL_PATH)/Src
+MODULES:= src
+INCLUDES:= include  ${HAL_PATH}/Inc ${CUBE_DRV_PATH}/CMSIS/Device/ST/STM32F4xx/Include ${CUBE_DRV_PATH}/CMSIS/Include
+EXCLUDES:= $(HAL_PATH)/Src/stm32f4xx_hal_msp_template.c
 
 INCLUDES += . $(MODULES)
 
 SRC:= $(wildcard *.c *.cc *.s)
 SRC += $(foreach sdir,$(MODULES),$(wildcard $(sdir)/*.c $(sdir)/*.cc $(sdir)/*.s))
+SRC:= $(filter-out $(EXCLUDES),$(SRC))
 
 OBJ:= $(patsubst %.c,%.o,$(SRC))
 OBJ:= $(patsubst %.cc,%.o,$(OBJ))
@@ -36,7 +37,6 @@ FLASH := sudo st-flash
 
 
 all: checkdirs hex bin
-	@echo $(DEPS)
 
 # symbolic targets:
 help:
