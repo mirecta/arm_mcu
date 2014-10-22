@@ -88,7 +88,6 @@ Add this lines to your .vimrc
 autocmd FileType c setlocal tags+=~/.vim/tags/arm
 autocmd FileType cpp setlocal tags+=~/.vim/tags/arm
 ```
-and use my config ... 
 
 good luck
 
