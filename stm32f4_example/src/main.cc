@@ -47,13 +47,17 @@ void TIM2_IRQHandler(void) {
  }
 #endif
 
+//try systick 
+
+
+
 int main() {
     /* Enbale GPIOA clock */
     RCC->AHB1ENR |= RCC_AHB1ENR_GPIOAEN;
     /* Configure GPIOA pin 5 as output */
-    GPIOA->MODER |= (1 << (LED_PIN << 1));
+    GPIOA->MODER |= GPIO_MODER_MODER5_0;
     /* Configure GPIOA pin 5 in max speed */
-    GPIOA->OSPEEDR |= (3 << (LED_PIN << 1));
+    GPIOA->OSPEEDR |= GPIO_OSPEEDER_OSPEEDR5;
  
 
     //enable timer clock
@@ -68,6 +72,7 @@ int main() {
     TIM2->CR1 |= TIM_CR1_ARPE | TIM_CR1_CEN | TIM_CR1_URS; // autoreload on, counter enabled, event only in owerflow or auto reload
     TIM2->EGR = TIM_EGR_UG; // trigger update event to reload timer registers
 
+    LED_ON();
   while(1);
     /* Turn on the LED */
  // LED_ON();
