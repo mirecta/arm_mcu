@@ -23,7 +23,11 @@
 #define SYSTEM_INIT_ERROR_PLL 0x02
 #define SYSTEM_INIT_ERROR_CLKSRC 0x04
 #define SYSTEM_INIT_ERROR_HSI 0x08
- 
+
+
+void SystemInitError(uint8_t error_source);
+
+
 void SystemInit() {
     /* Enable Power Control clock */
     RCC->APB1ENR |= RCC_APB1LPENR_PWRLPEN;

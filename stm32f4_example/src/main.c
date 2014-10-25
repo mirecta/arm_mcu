@@ -17,18 +17,24 @@
 *
 */
 #include <stm32f4xx.h>
- 
+//#include "stm32f4_gpio.h"
+#include "stm32f4_util.h"
+
 #define LED_PIN 5
 #define LED_ON() GPIOA->BSRRL |= (1 << 5)
 #define LED_OFF() GPIOA->BSRRH |= (1 << 5)
 
-volatile int status = 0; 
+
 
 #ifdef __cplusplus
  extern "C" {
 #endif
+//----------------------------- uncoment to blink with interrupt ------------------
+/*
 
-void TIM2_IRQHandler(void) {
+  volatile int status = 0; 
+  
+  void TIM2_IRQHandler(void) {
   // flash on update event
   if (TIM2->SR & TIM_SR_UIF){
   if(status == 0) {
@@ -42,27 +48,32 @@ void TIM2_IRQHandler(void) {
    
   TIM2->SR = 0x0; // reset the status register
 }
-
+*/
+ //------------------------------------/blink with interrupt -----------------------
 #ifdef __cplusplus
  }
 #endif
 
-//try systick 
 
 
 
 int main() {
+    initDelay();
+    
+    
     /* Enbale GPIOA clock */
     RCC->AHB1ENR |= RCC_AHB1ENR_GPIOAEN;
-    /* Configure GPIOA pin 5 as output */
-    GPIOA->MODER |= GPIO_MODER_MODER5_0;
     /* Configure GPIOA pin 5 in max speed */
     GPIOA->OSPEEDR |= GPIO_OSPEEDER_OSPEEDR5;
- 
-
     //enable timer clock
     RCC->APB1ENR |= RCC_APB1ENR_TIM2EN;
 
+
+//-------------------------- uncoment to blink with interrupt ----------------
+  /*
+    
+    GPIOA->MODER |= GPIO_MODER_MODER5_0; // A5 to ouput
+     
     //enable interrupt
     NVIC_EnableIRQ(TIM2_IRQn);
 
@@ -72,9 +83,36 @@ int main() {
     TIM2->CR1 |= TIM_CR1_ARPE | TIM_CR1_CEN | TIM_CR1_URS; // autoreload on, counter enabled, event only in owerflow or auto reload
     TIM2->EGR = TIM_EGR_UG; // trigger update event to reload timer registers
 
-    LED_ON();
-  while(1);
-    /* Turn on the LED */
- // LED_ON();
- 
+    while(1);
+*/
+//-----------------------------------------------------------------------------
+//------------------------------uncoment to pwm blink -------------------------
+    
+    GPIOA->MODER |= GPIO_MODER_MODER5_1; // A5 to alternate func
+    GPIOA->AFR[0] |= 1 << 20; // enable AF1 to A5 1 << (5*4)
+    
+    //setup timer 2
+    
+    TIM2->PSC = 50;
+    TIM2->ARR = 10000;
+    TIM2->CR1 |= TIM_CR1_ARPE | TIM_CR1_CEN; //enable timer2 , preload autoreload
+    TIM2->CCMR1 |= TIM_CCMR1_OC1M_1 | TIM_CCMR1_OC1M_2 | TIM_CCMR1_OC1PE | TIM_CCMR1_OC1FE; //enable PWM1 on CCR1 with fast compare and preload 
+    TIM2->EGR |= TIM_EGR_UG; // refresh registers
+    TIM2->CCER |= TIM_CCER_CC1E; // enable CC1E basic output with basic polarity 
+    TIM2->CCR1 = 5000; //set pwm to half max is ARR-1
+   
+  while(1){
+    for (int i = 0 ; i< 10000; i+=20){
+      TIM2->CCR1 = i;
+      Delay(1);
+    }
+    for (int i = 10000 ; i >=0 ; i-=20){
+      TIM2->CCR1 = i;
+      Delay(1);
+    }
+    
+  }
+  
+//------------------------------------------------------------------------------
+
 }
