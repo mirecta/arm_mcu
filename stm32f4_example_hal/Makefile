@@ -6,7 +6,7 @@ CUBE_DRV_PATH := /home/miro/agct/STM32Cube_FW_F4_V1.3.0/Drivers
 HAL_PATH :=  ${CUBE_DRV_PATH}/STM32F4xx_HAL_Driver
 
 MODULES := src $(HAL_PATH)/Src
-#MODULES:=
+#MODULES:= src
 INCLUDES:= include  ${HAL_PATH}/Inc ${CUBE_DRV_PATH}/CMSIS/Device/ST/STM32F4xx/Include ${CUBE_DRV_PATH}/CMSIS/Include
 EXCLUDES:= $(HAL_PATH)/Src/stm32f4xx_hal_msp_template.c
 
@@ -22,13 +22,14 @@ OBJ:= $(patsubst %.s,%.o,$(OBJ))
 OBJ:= $(patsubst %.o, build/%.o, $(notdir $(OBJ)))
 VPATH:=$(MODULES)
 
-CFLAGS := -mcpu=cortex-m4 -Os -mlittle-endian -mthumb -mthumb-interwork -Wall -D${DEVICE}
+CFLAGS := -ggdb -mcpu=cortex-m4 -Os -mlittle-endian -mthumb -mthumb-interwork -Wall -D${DEVICE}
 CFLAGS += $(addprefix -I ,$(INCLUDES))
-LDFLAGS := -Wl,--gc-sections -TSTM32F411RE_FLASH.ld
+LDFLAGS :=  -mcpu=cortex-m4 -mlittle-endian -mthumb -mthumb-interwork  -D${DEVICE} -TSTM32F411RE_FLASH.ld -Wl,--gc-sections
 
 DEPS = $(OBJ:.o=.d)
 
 CC := arm-none-eabi-gcc 
+LD := arm-none-eabi-ld
 OBJCOPY := arm-none-eabi-objcopy
 OBJDUMP := arm-none-eabi-objdump
 
@@ -53,7 +54,7 @@ bin: $(BUILD_DIR)/main.bin
 
 # rule for uploading firmware:
 flash: $(BUILD_DIR)/main.bin
-	$(FLASH) --reset write $(BUILD_DIR)/main.bin  0x8000000
+	$(FLASH) --reset write $(BUILD_DIR)/main.bin  0x8000000 1>&2
 
 
 # Generic rule for compiling C files:

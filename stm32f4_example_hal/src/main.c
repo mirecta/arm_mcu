@@ -56,6 +56,7 @@ static void Error_Handler(void);
 
 /* Private functions ---------------------------------------------------------*/
 
+
 /**
   * @brief  Main program
   * @param  None
@@ -77,7 +78,26 @@ int main(void)
   
   /* Configure the System clock to 100 MHz */
   SystemClock_Config();
+    
   
+
+  GPIO_InitTypeDef   GPIO_InitStructure;
+    
+  /* Enable GPIOA clock */
+  __GPIOA_CLK_ENABLE();
+  
+  GPIO_InitStructure.Pin=GPIO_PIN_5;
+  GPIO_InitStructure.Mode=GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStructure.Pull=GPIO_PULLUP;
+  GPIO_InitStructure.Speed=GPIO_SPEED_HIGH;
+  
+  HAL_GPIO_Init(GPIOA,&GPIO_InitStructure);
+
+  GPIOA->BSRRL |= GPIO_PIN_5;
+  //HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);
+
+
+
 
   /* Add your application code here
      */
@@ -85,7 +105,12 @@ int main(void)
 
   /* Infinite loop */
   while (1)
-  {    
+  {
+      HAL_Delay(500);
+      GPIOA->BSRRH |= GPIO_PIN_5;
+      HAL_Delay(500);
+      GPIOA->BSRRL |= GPIO_PIN_5;
+
   }
 }
 
@@ -172,16 +197,16 @@ static void Error_Handler(void)
   * @param  line: assert_param error line source number
   * @retval None
   */
-void assert_failed(uint8_t* file, uint32_t line)
-{ 
+//void assert_failed(uint8_t* file, uint32_t line)
+//{ 
   /* User can add his own implementation to report the file name and line number,
      ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
 
   /* Infinite loop */
-  while (1)
-  {
-  }
-}
+ // while (1)
+//  {
+//  }
+//}
 #endif
 
 /**
