@@ -51,7 +51,8 @@ int main() {
 
     
     gl.clearScr();
-    gl.fillRoundRect(30,30,50,50,10,RGB(0,255,0));
+    gl.fillRoundRect(30,30,50,70,10,RGB(0,255,0));
+    gl.write('A');
     //gl.clearScr(RGB(0,255,0));
     //    gl.drawLine(5,5,20,20,RGB(255,0,255));
     //GPIOB->BSRRL = 1 << GP_PIN9;

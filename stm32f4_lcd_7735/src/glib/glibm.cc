@@ -16,7 +16,8 @@ namespace{
 }
 
 
-GlibM::GlibM(int16_t w, int16_t h):_w(w),_h(h),wrap(true){
+GlibM::GlibM(int16_t w, int16_t h):_w(w),_h(h),_cx(0),_cy(0),
+          textcolor(0xffff),textbgcolor(0x00),textsize(1),wrap(true){
 
     Delay(10);
     st7735_Init();
@@ -252,7 +253,7 @@ void GlibM::drawChar(int16_t x, int16_t y, unsigned char c,
             line = 0x0;
         else
             line = font[(c*5)+i];
-        
+        `
         uint8_t tmp = line;
         
         for (int8_t k = 0; k < size; ++k){
