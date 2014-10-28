@@ -1,0 +1,10 @@
+let g:netrw_dirhistmax  =10
+let g:netrw_dirhist_cnt =8
+let g:netrw_dirhist_1='/mnt/big/multimedia/movie/p/mejdan4'
+let g:netrw_dirhist_2='/mnt/big/multimedia/digital/2012-02-11_Zuzana-Petra/work/petra.txt'
+let g:netrw_dirhist_3='/home/miro/svn/hardware/trunk/arm'
+let g:netrw_dirhist_4='/home/miro/git/arm_mcu/stm32f4_test'
+let g:netrw_dirhist_5='/home/miro/.vim'
+let g:netrw_dirhist_6='/home/miro/git/arm_mcu/stm32f4_lcd_7735/src/st7735'
+let g:netrw_dirhist_7='/home/miro/git/arm_mcu/stm32f4_lcd_7735/src'
+let g:netrw_dirhist_8='/home/miro/git/arm_mcu/stm32f4_lcd_7735/src/st7735'
