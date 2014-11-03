@@ -30,7 +30,7 @@
  extern "C" {
 #endif
 //----------------------------- uncoment to blink with interrupt ------------------
-/*
+
 
   volatile int status = 0; 
   
@@ -48,7 +48,7 @@
    
   TIM2->SR = 0x0; // reset the status register
 }
-*/
+
  //------------------------------------/blink with interrupt -----------------------
 #ifdef __cplusplus
  }
@@ -70,7 +70,7 @@ int main() {
 
 
 //-------------------------- uncoment to blink with interrupt ----------------
-  /*
+  
     
     GPIOA->MODER |= GPIO_MODER_MODER5_0; // A5 to ouput
      
@@ -84,10 +84,10 @@ int main() {
     TIM2->EGR = TIM_EGR_UG; // trigger update event to reload timer registers
 
     while(1);
-*/
+
 //-----------------------------------------------------------------------------
 //------------------------------uncoment to pwm blink -------------------------
-    
+/*    
     GPIOA->MODER |= GPIO_MODER_MODER5_1; // A5 to alternate func
     GPIOA->AFR[0] |= 1 << 20; // enable AF1 to A5 1 << (5*4)
     
@@ -112,7 +112,7 @@ int main() {
     }
     
   }
-  
+ */ 
 //------------------------------------------------------------------------------
 
 }
