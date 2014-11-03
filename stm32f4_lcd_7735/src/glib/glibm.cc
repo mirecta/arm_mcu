@@ -253,7 +253,7 @@ void GlibM::drawChar(int16_t x, int16_t y, unsigned char c,
             line = 0x0;
         else
             line = font[(c*5)+i];
-        `
+        
         uint8_t tmp = line;
         
         for (int8_t k = 0; k < size; ++k){
