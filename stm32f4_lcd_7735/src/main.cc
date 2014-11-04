@@ -20,6 +20,8 @@
 #include "stm32f4_gpio.h"
 #include "stm32f4_util.h"
 #include "glibm.h"
+#include "flame.h"
+
 
 #define LED_PIN 5
 #define LED_ON() GPIOA->BSRRL |= (1 << 5)
@@ -40,9 +42,11 @@
 
 
 int main() {
-    initDelay();
+    char a = 0;
     
+    initDelay();
     GlibM gl(160,128);
+    Flame fl;
 
     RCC->AHB1ENR |= RCC_AHB1ENR_GPIOBEN;
     GPIOB->MODER |= (GP_MODE_OUTPUT << (GP_PIN9 << 1));
@@ -51,14 +55,26 @@ int main() {
 
     
     gl.clearScr();
-    gl.fillRoundRect(30,30,50,70,10,RGB(0,255,0));
-    gl.write('A');
+    //gl.fillRoundRect(30,30,50,70,10,RGB(0,255,0));
+    gl.setTextSize(2);
+    gl.write('F');
+    gl.write('I');
+    gl.write('R');
+    gl.write('E');
+
     //gl.clearScr(RGB(0,255,0));
     //    gl.drawLine(5,5,20,20,RGB(255,0,255));
     //GPIOB->BSRRL = 1 << GP_PIN9;
+
     while(1){
          
-        //Delay(1);
+        fl.compute(220,(a%2 == 0));
+        gl.rectToFill(0,159,47,127);
+        for(int i = 0; i < FLAME_WIDTH * FLAME_HEIGHT; ++i){
+            gl.rectFill(fl.getColor(fl.data()[i]));
+        }
+        ++a;
+      Delay(20);
 
     }
     
