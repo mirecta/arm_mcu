@@ -10,6 +10,8 @@ extern unsigned long _ebss; //end bss sector
 extern unsigned long _estack; //stack end 
 
 
+int main(void);
+
 __weak void SystemInit(void){
 //override this func to setup PLL clock which deppends on your MCU
 }
