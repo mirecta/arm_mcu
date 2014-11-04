@@ -47,6 +47,8 @@ public:
    void drawChar(int16_t x, int16_t y, unsigned char c,
         uint16_t color, uint16_t bg, uint8_t size);
 
+   void rectToFill(int16_t x1, int16_t x2, int16_t y1, int16_t y2);
+   void rectFill(uint16_t color);
 
    uint16_t width(void) const {return _w;}
    uint16_t height(void) const {return _h;}

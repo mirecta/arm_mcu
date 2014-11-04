@@ -6,6 +6,9 @@
 
 #define swap(a, b) { int16_t t = a; a = b; b = t; }
 
+#define FONT_WIDTH 6
+
+
 namespace{ 
     int16_t abs(int16_t v){
         if (v < 0)
@@ -229,8 +232,8 @@ void GlibM::write(uint8_t c) {
         // skip em
     } else {
         drawChar(_cx, _cy, c, textcolor, textbgcolor, textsize);
-        _cx += textsize*6;
-        if (wrap && (_cx > (_w - textsize*6))) {
+        _cx += textsize*FONT_WIDTH;
+        if (wrap && (_cx > (_w - textsize*FONT_WIDTH))) {
             _cy += textsize*8;
             _cx = 0;
         }
@@ -241,26 +244,26 @@ void GlibM::drawChar(int16_t x, int16_t y, unsigned char c,
         uint16_t color, uint16_t bg, uint8_t size) {
     if((x >= _w) || // Clip right
             (y >= _w) || // Clip bottom
-            ((x + 6 * size - 1) < 0) || // Clip left
+            ((x + FONT_WIDTH * size - 1) < 0) || // Clip left
             ((y + 8 * size - 1) < 0)) // Clip top
         return;
     
-    st7735_SetArea(x,x + 6 * size - 1,y,y + 8 * size - 1);
+    st7735_SetArea(x,x + FONT_WIDTH* size - 1,y,y + 8 * size - 1);
 
-    for (int8_t i=0; i<6; i++ ) {
-        uint8_t line;
-        if (i == 5)
-            line = 0x0;
-        else
-            line = font[(c*5)+i];
+    const uint8_t* base = font + (c*5);
+    uint8_t line;
+    for (int8_t i=0; i<8; i++ ) {
+       int8_t mask = 1 << i;
         
-        uint8_t tmp = line;
-        
-        for (int8_t k = 0; k < size; ++k){
-            line = tmp;
-            for (int8_t j = 0; j<8; j++) {
+       for (int8_t k = 0; k < size; ++k){
+            
+            for (int8_t j = 0; j<FONT_WIDTH; j++) {
+                if(j == FONT_WIDTH -1 )
+                  line = 0x0;
+                else
+                  line = base[j];
                 
-                if (line & 0x1) {
+                if (line & mask) {
                 
                     if (size == 1) // default size
                         st7735_WritePixelRaw(color);
@@ -277,8 +280,17 @@ void GlibM::drawChar(int16_t x, int16_t y, unsigned char c,
                             st7735_WritePixelRaw(bg);
                     }
                 }
-                line >>= 1;
+                
             }
         }
     }
+}
+
+void GlibM::rectToFill(int16_t x1, int16_t x2, int16_t y1, int16_t y2)
+{
+    st7735_SetArea(x1,x2,y1,y2);
+}
+
+void GlibM::rectFill(uint16_t color){
+    st7735_WritePixelRaw(color);
 }
