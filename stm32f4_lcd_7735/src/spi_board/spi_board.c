@@ -1,8 +1,9 @@
-#include "st7735.h"
-#include "stm32f4_util.h"
+
 #include "stm32f4_gpio.h"
 
 #include <stm32f4xx.h>
+
+#include "spi_board.h"
 
 /* PINS
  * lcd_cs - PA0
@@ -16,7 +17,14 @@
 
 
 /* LCD IO functions */
-void     LCD_IO_Init(void){
+void  spiBoardInit(void){
+
+    static uint8_t isInitialized = 0;
+
+    if(isInitialized)
+        return;
+
+    isInitialized = 1;
 
     //first of all enable clock to PA
     //and set it to high speed
@@ -64,65 +72,57 @@ void     LCD_IO_Init(void){
     SPI1->CR1 |= SPI_CR1_BR_0 | SPI_CR1_MSTR | SPI_CR1_SSM | SPI_CR1_SSI;//| SPI_CR1_CPOL | SPI_CR1_CPHA ;
     SPI1->CR1 |= SPI_CR1_SPE;
 
-    Delay(100);   
-
-
 }
-void     LCD_IO_WriteData16(uint16_t data){
+
+void  spiBoardLcdData16(uint16_t data){
     //set data
     GPIOA->BSRRL = 1 << GP_PIN1;
     //reset cs
     GPIOA->BSRRH = 1 << GP_PIN0;
     
-    //transmit data
-    SPI1->DR = data >> 8;
-    while(!(SPI1->SR & SPI_SR_TXE));
-    //while(!(SPI1->SR & SPI_SR_RXNE));
-    while((SPI1->SR & SPI_SR_BSY));
+    spiBoardSendRecv(data >> 8);
+    spiBoardSendRecv(data);
     
-    SPI1->DR = data;
-    while(!(SPI1->SR & SPI_SR_TXE));
-    //while(!(SPI1->SR & SPI_SR_RXNE));
-    while((SPI1->SR & SPI_SR_BSY));
     //set lcd_cs to 1
-    
     GPIOA->BSRRL = 1 << GP_PIN0;
 }
        
 
-void     LCD_IO_WriteData(uint8_t Data){
+uint8_t spiBoardSendRecv(uint8_t data){
+    //transmit data
+    SPI1->DR = data;
+    while(!(SPI1->SR & SPI_SR_TXE));
+    while(!(SPI1->SR & SPI_SR_RXNE));
+    while((SPI1->SR & SPI_SR_BSY));
+    
+    return SPI1->DR;
+}
+
+void  spiBoardLcdData(uint8_t data){
     //set data
     GPIOA->BSRRL = 1 << GP_PIN1;
     //reset cs
     GPIOA->BSRRH = 1 << GP_PIN0;
     //transmit data
-    SPI1->DR = Data;
-    while(!(SPI1->SR & SPI_SR_TXE));
-    //while(!(SPI1->SR & SPI_SR_RXNE));
-    while((SPI1->SR & SPI_SR_BSY));
+    spiBoardSendRecv(data);
     //set lcd_cs to 1
     GPIOA->BSRRL = 1 << GP_PIN0;
 
 }
 
-void     LCD_IO_WriteReg(uint8_t Reg){
+void  spiBoardLcdCmd(uint8_t cmd){
     //set command
     GPIOA->BSRRH = 1 << GP_PIN1;
     //reset cs
     GPIOA->BSRRH = 1 << GP_PIN0;
     //transmit data
-    SPI1->DR = Reg;
-    while(!(SPI1->SR & SPI_SR_TXE));
- //   while(!(SPI1->SR & SPI_SR_RXNE));
-    while((SPI1->SR & SPI_SR_BSY));
+    spiBoardSendRecv(cmd);
+    
     //set lcd_cs to 1
     GPIOA->BSRRL = 1 << GP_PIN0;
 
 }
 
-void     LCD_Delay(uint32_t delay){
-        Delay(delay);
-}
 
 
 

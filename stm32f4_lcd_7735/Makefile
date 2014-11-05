@@ -7,7 +7,7 @@ CUBE_DRV_PATH := /home/miro/agct/STM32Cube_FW_F4_V1.3.0/Drivers
 HAL_PATH :=  ${CUBE_DRV_PATH}/STM32F4xx_HAL_Driver
 
 #MODULES := src $(HAL_PATH)/Src
-MODULES:= src src/util src/glib/st7735 src/glib
+MODULES:= src src/util src/glib/st7735 src/glib src/spi_board
 INCLUDES:= include src/st7735 ${CUBE_DRV_PATH}/CMSIS/Device/ST/STM32F4xx/Include ${CUBE_DRV_PATH}/CMSIS/Include
 EXCLUDES:= $(HAL_PATH)/Src/stm32f4xx_hal_msp_template.c
 

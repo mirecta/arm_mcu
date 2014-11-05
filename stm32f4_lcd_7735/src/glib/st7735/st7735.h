@@ -183,16 +183,6 @@ uint16_t st7735_GetLcdPixelWidth(void);
 uint16_t st7735_GetLcdPixelHeight(void);
 
 
-/* LCD IO functions */
-void     LCD_IO_Init(void);
-void     LCD_IO_WriteData(uint8_t Data);
-void     LCD_IO_WriteData16(uint16_t Data);
-void     LCD_IO_WriteReg(uint8_t Reg);
-void     LCD_Delay(uint32_t delay);
-/**
-  * @}
-  */
-
 #ifdef __cplusplus
 }
 #endif

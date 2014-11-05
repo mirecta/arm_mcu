@@ -37,6 +37,10 @@
   */
 
 /* Includes ------------------------------------------------------------------*/
+
+#include "stm32f4_util.h"
+#include "spi_board.h"
+            
 #include "st7735.h"
 
 /** @addtogroup BSP
@@ -107,17 +111,17 @@
 void st7735_Init(void)
 {    
   /* Initialize ST7735 low level bus layer -----------------------------------*/
-  LCD_IO_Init();
-  LCD_IO_WriteReg(0x01);
+  spiBoardInit();
+  spiBoardLcdCmd(0x01);
   /* Out of sleep mode, 0 args, no delay */
   st7735_WriteReg(LCD_REG_17,0x00);
   
   //st7735_WriteReg(LCD_REG_17, 0x00); 
   /* Frame rate ctrl - normal mode, 3 args:Rate = fosc/(1x2+40) * (LINE+2C+2D)*/
-  LCD_IO_WriteReg(LCD_REG_177);
-  LCD_IO_WriteData(0x01);
-  LCD_IO_WriteData(0x2C);
-  LCD_IO_WriteData(0x2D);
+  spiBoardLcdCmd(LCD_REG_177);
+  spiBoardLcdData(0x01);
+  spiBoardLcdData(0x2C);
+  spiBoardLcdData(0x2D);
   /* Frame rate control - idle mode, 3 args:Rate = fosc/(1x2+40) * (LINE+2C+2D) */    
   st7735_WriteReg(LCD_REG_178, 0x01);
   st7735_WriteReg(LCD_REG_178, 0x2C);
@@ -149,7 +153,7 @@ void st7735_Init(void)
   /* Power control, 1 arg, no delay */
   st7735_WriteReg(LCD_REG_197, 0x0E);
   /* Don't invert display, no args, no delay */
-  LCD_IO_WriteReg(LCD_REG_32);
+  spiBoardLcdCmd(LCD_REG_32);
   /* Set color mode, 1 arg, no delay: 16-bit color */
   st7735_WriteReg(LCD_REG_58, 0x05);
   /* Magical unicorn dust, 16 args, no delay */
@@ -200,12 +204,12 @@ void st7735_Init(void)
   */
 void st7735_DisplayOn(void)
 {
-  LCD_IO_WriteReg(LCD_REG_19);
-  LCD_Delay(10);
-  LCD_IO_WriteReg(LCD_REG_41);
-  LCD_Delay(10);
-  LCD_IO_WriteReg(LCD_REG_54);
-  LCD_IO_WriteData(0x60);
+  spiBoardLcdCmd(LCD_REG_19);
+  Delay(10);
+  spiBoardLcdCmd(LCD_REG_41);
+  Delay(10);
+  spiBoardLcdCmd(LCD_REG_54);
+  spiBoardLcdData(0x60);
 }
 
 /**
@@ -215,12 +219,12 @@ void st7735_DisplayOn(void)
   */
 void st7735_DisplayOff(void)
 {
-  LCD_IO_WriteReg(LCD_REG_19);
-  LCD_Delay(10);
-  LCD_IO_WriteReg(LCD_REG_40);
-  LCD_Delay(10);
-  LCD_IO_WriteReg(LCD_REG_54);
-  LCD_IO_WriteData(0x60);
+  spiBoardLcdCmd(LCD_REG_19);
+  Delay(10);
+  spiBoardLcdCmd(LCD_REG_40);
+  Delay(10);
+  spiBoardLcdCmd(LCD_REG_54);
+  spiBoardLcdData(0x60);
 }
 
 /**
@@ -231,13 +235,13 @@ void st7735_DisplayOff(void)
   */
 void st7735_SetCursor(int16_t Xpos, int16_t Ypos)
 {
-  LCD_IO_WriteReg(LCD_REG_42);
-  LCD_IO_WriteData16(Xpos);
-  LCD_IO_WriteData16(Xpos);
-  LCD_IO_WriteReg(LCD_REG_43); 
-  LCD_IO_WriteData16(Ypos);
-  LCD_IO_WriteData16(Ypos);
-  LCD_IO_WriteReg(LCD_REG_44);
+  spiBoardLcdCmd(LCD_REG_42);
+  spiBoardLcdData16(Xpos);
+  spiBoardLcdData16(Xpos);
+  spiBoardLcdCmd(LCD_REG_43); 
+  spiBoardLcdData16(Ypos);
+  spiBoardLcdData16(Ypos);
+  spiBoardLcdCmd(LCD_REG_44);
 }
 
 /**
@@ -257,7 +261,7 @@ void st7735_WritePixel(int16_t x, int16_t y, uint16_t color)
   if(y >= ST7735_LCD_PIXEL_HEIGHT) return;
   st7735_SetCursor(x, y);
   
-  LCD_IO_WriteData16(color);
+  spiBoardLcdData16(color);
 }  
 
 
@@ -269,9 +273,9 @@ void st7735_WritePixel(int16_t x, int16_t y, uint16_t color)
   */
 void st7735_WriteReg(uint8_t LCDReg, uint8_t LCDRegValue)
 {
-  LCD_IO_WriteReg(LCDReg);
+  spiBoardLcdCmd(LCDReg);
   
-  LCD_IO_WriteData(LCDRegValue);
+  spiBoardLcdData(LCDRegValue);
 }
 
 
@@ -304,35 +308,35 @@ void st7735_SetArea(int16_t x1, int16_t x2, int16_t y1, int16_t y2){
   if (y1 >= ST7735_LCD_PIXEL_HEIGHT) y1 = ST7735_LCD_PIXEL_HEIGHT - 1;
   if (y2 >= ST7735_LCD_PIXEL_HEIGHT) y2 = ST7735_LCD_PIXEL_HEIGHT - 1;
   
-  LCD_IO_WriteReg(LCD_REG_42);
-  LCD_IO_WriteData16(x1);
-  LCD_IO_WriteData16(x2);
-  LCD_IO_WriteReg(LCD_REG_43); 
-  LCD_IO_WriteData16(y1);
-  LCD_IO_WriteData16(y2);
-  LCD_IO_WriteReg(LCD_REG_44);
+  spiBoardLcdCmd(LCD_REG_42);
+  spiBoardLcdData16(x1);
+  spiBoardLcdData16(x2);
+  spiBoardLcdCmd(LCD_REG_43); 
+  spiBoardLcdData16(y1);
+  spiBoardLcdData16(y2);
+  spiBoardLcdCmd(LCD_REG_44);
 
 }
 
 void st7735_WritePixelRaw(uint16_t color){
  
-  LCD_IO_WriteData16(color);
+  spiBoardLcdData16(color);
 }
 
 void st7735_ResetArea(void){
-  LCD_IO_WriteReg(LCD_REG_42);
-  LCD_IO_WriteData16(0);
-  LCD_IO_WriteData16(ST7735_LCD_PIXEL_WIDTH-1);
-  LCD_IO_WriteReg(LCD_REG_43); 
-  LCD_IO_WriteData16(0);
-  LCD_IO_WriteData16(ST7735_LCD_PIXEL_HEIGHT-1);
-  LCD_IO_WriteReg(LCD_REG_44);
+  spiBoardLcdCmd(LCD_REG_42);
+  spiBoardLcdData16(0);
+  spiBoardLcdData16(ST7735_LCD_PIXEL_WIDTH-1);
+  spiBoardLcdCmd(LCD_REG_43); 
+  spiBoardLcdData16(0);
+  spiBoardLcdData16(ST7735_LCD_PIXEL_HEIGHT-1);
+  spiBoardLcdCmd(LCD_REG_44);
 }
 
 void st7735_Clear(uint16_t color){
  st7735_ResetArea();
  for(int i = 0; i < ST7735_LCD_PIXEL_WIDTH * ST7735_LCD_PIXEL_HEIGHT; ++i)
-        LCD_IO_WriteData16(color);
+        spiBoardLcdData16(color);
 }
 
 
