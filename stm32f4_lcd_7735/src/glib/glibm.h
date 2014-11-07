@@ -42,11 +42,18 @@ public:
    void fillRoundRect(int16_t x, int16_t y, int16_t w,
            int16_t h, int16_t r, uint16_t color);
 
-   void write(uint8_t c);
+   void write(const uint8_t c);
 
-   void drawChar(int16_t x, int16_t y, unsigned char c,
+   void drawChar(int16_t x, int16_t y, const unsigned char c,
         uint16_t color, uint16_t bg, uint8_t size);
 
+   void drawTextXY(int16_t x, int16_t y, const char* text);
+
+   void printfXY(int16_t x, int16_t y, char* format, ...);
+   
+   void drawPixel(int16_t x, int16_t y, uint16_t color);
+
+   
    void rectToFill(int16_t x1, int16_t x2, int16_t y1, int16_t y2);
    void rectFill(uint16_t color);
 

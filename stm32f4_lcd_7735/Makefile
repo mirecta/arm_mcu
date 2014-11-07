@@ -23,9 +23,12 @@ OBJ:= $(patsubst %.s,%.o,$(OBJ))
 OBJ:= $(patsubst %.o, build/%.o, $(notdir $(OBJ)))
 VPATH:=$(MODULES)
 
-CFLAGS :=    -mfpu=fpv4-sp-d16 -mfloat-abi=hard -ggdb -mcpu=cortex-m4 -Os -mlittle-endian -mthumb -mthumb-interwork -Wall -DCPU_FREQ=$(CPU_FREQ) -D${DEVICE}
+SOFT_FLOAT := -mfloat-abi=soft
+HARD_FLOAT := -mfpu=fpv4-sp-d16 -mfloat-abi=hard
+
+CFLAGS :=    $(HARD_FLOAT) -g -ggdb -mcpu=cortex-m4 -O0 -mlittle-endian -mthumb -mthumb-interwork  -Wall -DCPU_FREQ=$(CPU_FREQ) -D${DEVICE}
 CFLAGS += $(addprefix -I ,$(INCLUDES))
-LDFLAGS :=   -mfpu=fpv4-sp-d16 -mfloat-abi=hard --specs=nosys.specs -mcpu=cortex-m4 -mlittle-endian -mthumb -mthumb-interwork   -D${DEVICE} -TSTM32F411RE_FLASH.ld -Wl,--gc-sections 
+LDFLAGS :=   $(HARD_FLOAT) -g -ggdb --specs=nosys.specs -mcpu=cortex-m4 -mlittle-endian -mthumb -mthumb-interwork   -D${DEVICE} -TSTM32F411RE_FLASH.ld -Wl,--gc-sections 
 
 DEPS = $(OBJ:.o=.d)
 
@@ -61,7 +64,7 @@ flash: $(BUILD_DIR)/main.bin
 
 # Generic rule for compiling C files:
 $(BUILD_DIR)/%.o: %.c
-	$(CC) -std=c11 -fpermissive  $(CFLAGS)  -c $< -o $@
+	$(CC) -std=c99   $(CFLAGS)  -c $< -o $@
 	$(CC) $(CFLAGS) -MM $< > $(BUILD_DIR)/$*.d 
 
 $(BUILD_DIR)/%.o: %.cc

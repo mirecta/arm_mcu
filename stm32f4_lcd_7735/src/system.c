@@ -25,10 +25,17 @@
 #define SYSTEM_INIT_ERROR_HSI 0x08
 
 
+
+
+
+
 void SystemInitError(uint8_t error_source);
 
 
 void SystemInit() {
+    ///enable FPU unit access
+    SCB->CPACR |= ((3UL << 10*2)|(3UL << 11*2));  /* set CP10 and CP11 Full Access */
+    
     /* Enable Power Control clock */
     RCC->APB1ENR |= RCC_APB1LPENR_PWRLPEN;
     /* Regulator voltage scaling output selection: Scale 2 */

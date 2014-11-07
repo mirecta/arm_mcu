@@ -2,9 +2,6 @@
 #define __weak __attribute__((weak))
 #define __weak_alias_Default_Handler(f) void f(void)  __attribute__((weak, alias ("Default_Handler")))
 
-#include <stm32f4xx.h>
-
-
 extern unsigned long _sidata; //start data in flash
 extern unsigned long _sdata;  //start data in RAM
 extern unsigned long _edata;  //end data in RAM
@@ -46,9 +43,7 @@ void Reset_Handler(void)
 
 //default interrupt handler
 void Default_Handler(void){
-    GPIOB->BSRRL = 1 << 9;
-
-    while(1);
+   while(1);
 }
 
 

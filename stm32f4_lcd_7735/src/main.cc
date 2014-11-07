@@ -21,7 +21,7 @@
 #include "stm32f4_util.h"
 #include "glibm.h"
 #include "flame.h"
-
+#include <stdio.h>
 
 #define LED_PIN 5
 #define LED_ON() GPIOA->BSRRL |= (1 << 5)
@@ -42,8 +42,16 @@
 
 
 int main() {
-    char a = 0;
-    
+    char a = 1;
+    char shbuf[128];
+
+    float x = 12.5;
+    float b = 1.8;
+    float c;
+
+
+    c = x*b;
+
     initDelay();
     GlibM gl(160,128);
     Flame fl;
@@ -55,12 +63,14 @@ int main() {
 
     
     gl.clearScr();
-    //gl.fillRoundRect(30,30,50,70,10,RGB(0,255,0));
-    gl.setTextSize(2);
-    gl.write('F');
-    gl.write('I');
-    gl.write('R');
-    gl.write('E');
+   // gl.fillRoundRect(30,30,50,70,10,RGB(0,255,0));
+    gl.setTextSize(1);
+    gl.write('A');
+     //snprintf(buf,128,"milis:  ");
+     //gl.drawTextXY(0,0,buf);
+
+    gl.printfXY(0,0,"Hello %d",a);
+
 
     //gl.clearScr(RGB(0,255,0));
     //    gl.drawLine(5,5,20,20,RGB(255,0,255));

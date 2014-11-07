@@ -1,4 +1,8 @@
 
+
+
+#include <stdarg.h>
+#include <stdio.h>
 #include "glibm.h"
 #include "st7735.h"
 #include "stm32f4_util.h"
@@ -224,7 +228,13 @@ void GlibM::fillRoundRect(int16_t x, int16_t y, int16_t w,
     fillCircleHelper(x+w-r-1, y+r, r, 1, h-2*r-1, color);
     fillCircleHelper(x+r , y+r, r, 2, h-2*r-1, color);
 }
-void GlibM::write(uint8_t c) {
+
+void GlibM::drawPixel(int16_t x, int16_t y, uint16_t color){
+
+    st7735_WritePixel(x,y,color);
+}
+
+void GlibM::write(const uint8_t c) {
     if (c == '\n') {
         _cy += textsize*8;
         _cx = 0;
@@ -239,8 +249,36 @@ void GlibM::write(uint8_t c) {
         }
     }
 }
+
+void GlibM::drawTextXY(int16_t x, int16_t y, const char* text){
+  
+    int16_t posx = x;
+    int16_t posy = y;
+
+   while(*text){
+       if(*text == '\n'){
+           posx = x;
+           posy += textsize*8;
+       }else{
+           drawChar(posx,posy,*text, textcolor,textbgcolor,textsize);
+           posx += textsize*FONT_WIDTH;
+       }
+     ++text;
+   }
+}
+
+void GlibM::printfXY(int16_t x, int16_t y, char* fmt, ...){
+    char buf[128];
+    va_list args;
+    va_start (args, fmt);
+    vsnprintf(buf,128, fmt, args);
+    va_end (args);
+    drawTextXY(x,y,buf);
+}
+
+
 // Draw a character
-void GlibM::drawChar(int16_t x, int16_t y, unsigned char c,
+void GlibM::drawChar(int16_t x, int16_t y, const unsigned char c,
         uint16_t color, uint16_t bg, uint8_t size) {
     if((x >= _w) || // Clip right
             (y >= _w) || // Clip bottom
