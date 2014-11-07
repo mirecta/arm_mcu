@@ -76,6 +76,36 @@ st-flash read dump.bin  0x8000000 256
 ```
 if not work  u can try add sudo , if sudo works, there are sam problem with udev :)
 
+GDB
+
+```
+st-util
+```
+then run debugger 
+```
+arm-none-eabi-gdb --eval-command="target remote localhost:4242" build/main.elf
+```
+
+etc.
+```
+load - flash
+br .... - add breakpoint file:line or *address
+cont - continue
+.....
+s, si,n - step, step instruction, next
+
+p args - print args
+info registers - print registers
+list - list source
+disassemble - disassemble memory
+x address - pint address cell 
+
+```
+
+
+
+
+
 
 Prepare VIM (optional)
 ----------------------
