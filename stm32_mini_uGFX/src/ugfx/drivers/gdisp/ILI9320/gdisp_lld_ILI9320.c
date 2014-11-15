@@ -93,7 +93,7 @@ static void set_viewport(GDisplay *g) {
 }
 
 LLDSPEC bool_t gdisp_lld_init(GDisplay *g) {
-	uint16_t cver;
+//	uint16_t cver;
 
 	// No private area for this controller
 	g->priv = 0;
@@ -103,19 +103,22 @@ LLDSPEC bool_t gdisp_lld_init(GDisplay *g) {
 
 	/* Hardware reset */
 	setpin_reset(g, TRUE);
-	gfxSleepMicroseconds(1000);
+	gfxSleepMilliseconds(50);
 	setpin_reset(g, FALSE);
-	gfxSleepMicroseconds(1000);
+	gfxSleepMilliseconds(50);
 
 	acquire_bus(g);
-	write_index(g, 0);				// Get controller version
+/*	write_index(g, 0);				// Get controller version
 	setreadmode(g);
 	dummy_read(g);
     cver = read_data(g);
-	
+*/	
     setwritemode(g);
+	write_reg(g, 0xE3, 0x3008); // Set internal timing
+	write_reg(g, 0xE7, 0x0012); // Set internal timing
+	write_reg(g, 0xEF, 0x1231); // Set internal timing
     write_reg(g, 0x00, 0x0001); //start Int. osc
-    gfxSleepMicroseconds(500);
+    gfxSleepMilliseconds(2);
     write_reg(g, 0x01, 0x0100); //Set SS bit (shift direction of outputs is from S720 to S1)
     write_reg(g, 0x02, 0x0700); //select  the line inversion
     write_reg(g, 0x03, 0x1028); //Entry mode(Horizontal : increment,Vertical : increment, AM=1)
@@ -130,15 +133,15 @@ LLDSPEC bool_t gdisp_lld_init(GDisplay *g) {
     write_reg(g, 0x11, 0x0000); //power control 2 reference voltages = 1:1,
     write_reg(g, 0x12, 0x0000); //power control 3 VRH
     write_reg(g, 0x13, 0x0000); //power control 4 VCOM amplitude
-    gfxSleepMicroseconds(500);
+    gfxSleepMilliseconds(2);
     write_reg(g, 0x10, 0x17B0); //power control 1 BT,AP
     write_reg(g, 0x11, 0x0137); //power control 2 DC,VC
-    gfxSleepMicroseconds(500);
+    gfxSleepMilliseconds(2);
     write_reg(g, 0x12, 0x0139); //power control 3 VRH
-    gfxSleepMicroseconds(500);
+    gfxSleepMilliseconds(2);
     write_reg(g, 0x13, 0x1d00); //power control 4 vcom amplitude
     write_reg(g, 0x29, 0x0011); //power control 7 VCOMH
-    gfxSleepMicroseconds(500);
+    gfxSleepMilliseconds(2);
     write_reg(g, 0x30, 0x0007);
     write_reg(g, 0x31, 0x0403);
     write_reg(g, 0x32, 0x0404);
@@ -317,9 +320,9 @@ LLDSPEC bool_t gdisp_lld_init(GDisplay *g) {
 				switch((orientation_t)g->p.ptr) {
 				case GDISP_ROTATE_0:
 					acquire_bus(g);
-					//write_reg(g, 0x01, 0x0100);
+					write_reg(g, 0x01, 0x0100);
 					write_reg(g, 0x03, 0x1028);
-					write_reg(g, 0x60, 0x2700);
+					write_reg(g, 0x60, 0xA700);
 					release_bus(g);
 
 					g->g.Height = GDISP_SCREEN_HEIGHT;
@@ -328,7 +331,7 @@ LLDSPEC bool_t gdisp_lld_init(GDisplay *g) {
 
 				case GDISP_ROTATE_90:
 					acquire_bus(g);
-					//write_reg(g, 0x01, 0x0000);
+					write_reg(g, 0x01, 0x0100);
 					write_reg(g, 0x03, 0x1030);
 					write_reg(g, 0x60, 0x2700);
 					release_bus(g);
@@ -339,7 +342,7 @@ LLDSPEC bool_t gdisp_lld_init(GDisplay *g) {
 
 				case GDISP_ROTATE_180:
 					acquire_bus(g);
-					//write_reg(g, 0x01, 0x0000);
+					write_reg(g, 0x01, 0x0000);
 					write_reg(g, 0x03, 0x1018);
 					write_reg(g, 0x60, 0x2700);
 					release_bus(g);
@@ -350,8 +353,8 @@ LLDSPEC bool_t gdisp_lld_init(GDisplay *g) {
 
 				case GDISP_ROTATE_270:
 					acquire_bus(g);
-					//write_reg(g, 0x01, 0x0100);
-					write_reg(g, 0x03, 0x1000);
+					write_reg(g, 0x01, 0x0000);
+					write_reg(g, 0x03, 0x0000);
 					write_reg(g, 0x60, 0xA700);
 					release_bus(g);
 

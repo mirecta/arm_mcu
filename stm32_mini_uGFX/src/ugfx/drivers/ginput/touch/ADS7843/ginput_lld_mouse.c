@@ -14,11 +14,11 @@
 #include "ginput_lld_mouse_board.h"
 
 #if defined(GINPUT_MOUSE_YX_INVERTED) && GINPUT_MOUSE_YX_INVERTED
-	#define CMD_X 0x91
-	#define CMD_Y 0xD1
-#else
 	#define CMD_X 0xD1
 	#define CMD_Y 0x91
+#else
+	#define CMD_X 0x91
+	#define CMD_Y 0xD1
 #endif
 
 
