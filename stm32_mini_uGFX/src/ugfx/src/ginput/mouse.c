@@ -119,12 +119,15 @@ void _tsOrientClip(MouseReading *pt, GDisplay *g, bool_t doClip) {
 
 #if GINPUT_MOUSE_NEED_CALIBRATION
 	static inline void _tsSetIdentity(Calibration *c) {
-		c->ax = 1;
-		c->bx = 0;
-		c->cx = 0;
-		c->ay = 0;
-		c->by = 1;
-		c->cy = 0;
+		c->ax = -0.0658899471;
+		c->bx = -0.000626470428;
+	  //c->bx = 0;
+		c->cx = 256.507538;
+		
+        c->ay = 0.00113010348;
+		//c->ay = 0;
+		c->by = -0.0894747153;
+		c->cy = 352.960724;
 	}
 
 	static inline void _tsDrawCross(const MousePoint *pp) {

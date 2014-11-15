@@ -18,6 +18,7 @@
 
 #ifndef _GFILE_H
 #define _GFILE_H
+#include <stdarg.h>
 
 #include "gfx.h"
 

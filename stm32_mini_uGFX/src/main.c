@@ -29,79 +29,88 @@
 
 #include "gfx.h"
 
-static GListener gl;
-static GHandle   ghButton1;
+#define COLOR_SIZE	20
+#define PEN_SIZE	20
+#define OFFSET		3
 
-static void createWidgets(void) {
-	GWidgetInit	wi;
+#define COLOR_BOX(a)		(ev.x >= a && ev.x <= a + COLOR_SIZE)
+#define PEN_BOX(a)			(ev.y >= a && ev.y <= a + COLOR_SIZE)
+#define GET_COLOR(a)		(COLOR_BOX(a * COLOR_SIZE + OFFSET))
+#define GET_PEN(a)			(PEN_BOX(a * 2 * PEN_SIZE + OFFSET))
+#define DRAW_COLOR(a)		(a * COLOR_SIZE + OFFSET)
+#define DRAW_PEN(a)			(a * 2 * PEN_SIZE + OFFSET)
+#define DRAW_AREA(x, y)		(x >= PEN_SIZE + OFFSET + 3 && x <= gdispGetWidth() && \
+							 y >= COLOR_SIZE + OFFSET + 3 && y <= gdispGetHeight())
 
-	// Apply some default values for GWIN
-	gwinWidgetClearInit(&wi);
-	wi.g.show = TRUE;
+void drawScreen(void) {
+	char *msg = "uGFX";
+	font_t		font1, font2;
 
-	// Apply the button parameters	
-	wi.g.width = 100;
-	wi.g.height = 30;
-	wi.g.y = 10;
-	wi.g.x = 10;
-	wi.text = "Push Button";
+	font1 = gdispOpenFont("DejaVuSans24*");
+	font2 = gdispOpenFont("DejaVuSans12*");
 
-	// Create the actual button
-	ghButton1 = gwinButtonCreate(0, &wi);
+	gdispClear(White);
+	gdispDrawString(gdispGetWidth()-gdispGetStringWidth(msg, font1)-3, 3, msg, font1, Black);
+	
+	/* colors */
+	gdispFillArea(0 * COLOR_SIZE + 3, 3, COLOR_SIZE, COLOR_SIZE, Black);	/* Black */
+	gdispFillArea(1 * COLOR_SIZE + 3, 3, COLOR_SIZE, COLOR_SIZE, Red);		/* Red */
+	gdispFillArea(2 * COLOR_SIZE + 3, 3, COLOR_SIZE, COLOR_SIZE, Yellow);	/* Yellow */
+	gdispFillArea(3 * COLOR_SIZE + 3, 3, COLOR_SIZE, COLOR_SIZE, Green);	/* Green */
+	gdispFillArea(4 * COLOR_SIZE + 3, 3, COLOR_SIZE, COLOR_SIZE, Blue);		/* Blue */
+	gdispDrawBox (5 * COLOR_SIZE + 3, 3, COLOR_SIZE, COLOR_SIZE, Black);	/* White */
+
+	/* pens */	
+	gdispFillStringBox(OFFSET * 2, DRAW_PEN(1), PEN_SIZE, PEN_SIZE, "1", font2, White, Black, justifyCenter);
+	gdispFillStringBox(OFFSET * 2, DRAW_PEN(2), PEN_SIZE, PEN_SIZE, "2", font2, White, Black, justifyCenter);
+	gdispFillStringBox(OFFSET * 2, DRAW_PEN(3), PEN_SIZE, PEN_SIZE, "3", font2, White, Black, justifyCenter);
+	gdispFillStringBox(OFFSET * 2, DRAW_PEN(4), PEN_SIZE, PEN_SIZE, "4", font2, White, Black, justifyCenter);
+	gdispFillStringBox(OFFSET * 2, DRAW_PEN(5), PEN_SIZE, PEN_SIZE, "5", font2, White, Black, justifyCenter);
+	
+	gdispCloseFont(font1);
+	gdispCloseFont(font2);
 }
 
+GEventMouse		ev;
+
 int main(void) {
-	GEvent* pe;
-	static const orientation_t	orients[] = { GDISP_ROTATE_0, GDISP_ROTATE_90, GDISP_ROTATE_180, GDISP_ROTATE_270 };
-	unsigned which;
+	color_t color = Black;
+	uint16_t pen = 0;
 
-	// Initialize the display
 	gfxInit();
+	ginputGetMouse(9999);
 
-	// We are currently at GDISP_ROTATE_0
-	which = 0;
-	gdispSetOrientation(orients[which]);
+	drawScreen();
 
-	// Set the widget defaults
-	gwinSetDefaultFont(gdispOpenFont("UI2"));
-	gwinSetDefaultStyle(&WhiteWidgetStyle, FALSE);
-	gdispClear(White);
+	while (TRUE) {
+		ginputGetMouseStatus(0, &ev);
+		if (!(ev.current_buttons & GINPUT_MOUSE_BTN_LEFT))
+			continue;
 
-	// Attach the mouse input
-	gwinAttachMouse(0);
+		/* inside color box ? */
+		if(ev.y >= OFFSET && ev.y <= COLOR_SIZE) {
+			     if(GET_COLOR(0)) 	color = Black;
+			else if(GET_COLOR(1))	color = Red;
+			else if(GET_COLOR(2))	color = Yellow;
+			else if(GET_COLOR(3))	color = Green;
+			else if(GET_COLOR(4))	color = Blue;
+			else if(GET_COLOR(5))	color = White;
+		
+		/* inside pen box ? */
+		} else if(ev.x >= OFFSET && ev.x <= PEN_SIZE) {
+			     if(GET_PEN(1))		pen = 0;
+			else if(GET_PEN(2))		pen = 1;
+			else if(GET_PEN(3))		pen = 2;
+			else if(GET_PEN(4))		pen = 3;
+			else if(GET_PEN(5))		pen = 4;		
 
-	// create the widget
-	createWidgets();
-
-	// We want to listen for widget events
-	geventListenerInit(&gl);
-	gwinAttachListener(&gl);
-
-	while(1) {
-		// Get an Event
-		pe = geventEventWait(&gl, TIME_INFINITE);
-
-		switch(pe->type) {
-			case GEVENT_GWIN_BUTTON:
-				if (((GEventGWinButton*)pe)->button == ghButton1) {
-					// Our button has been pressed
-					if (++which >= sizeof(orients)/sizeof(orients[0]))
-						which = 0;
-
-					// Setting the orientation during run-time is a bit naughty particularly with
-					// GWIN windows. In this case however we know that the button is in the top-left
-					// corner which should translate safely into any orientation.
-					gdispSetOrientation(orients[which]);
-					gdispClear(White);
-					gwinRedrawDisplay(GDISP, FALSE);
-				}
-				break;
-
-			default:
-				break;
+		/* inside drawing area ? */
+		} else if(DRAW_AREA(ev.x, ev.y)) {
+			if(pen == 0)
+				gdispDrawPixel(ev.x, ev.y, color);
+			else
+				gdispFillCircle(ev.x, ev.y, pen, color);
 		}
 	}
-
-	return 0;
 }
 
