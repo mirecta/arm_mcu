@@ -60,9 +60,9 @@ extern void _gosDeinit(void);
 void gfxInit(void)
 {
 	/* Ensure we only initialise once */
-//	if (initDone)
-//		return;
-//	initDone = TRUE;
+	if (initDone)
+		return;
+	initDone = TRUE;
 
 	// These must be initialised in the order of their dependancies
 
