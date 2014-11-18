@@ -18,8 +18,7 @@
 
 static inline void init_board(GDisplay *g) {
 
-    //enable FSMC
-    RCC_AHBPeriphClockCmd(RCC_AHBPeriph_FSMC, ENABLE);
+    
     //init GPIO
     GPIO_InitTypeDef GPIO_InitStructure;
 
@@ -93,6 +92,9 @@ static inline void init_board(GDisplay *g) {
 
     /* Enable FSMC Bank1_SRAM Bank */
     FSMC_NORSRAMCmd(FSMC_Bank1_NORSRAM1, ENABLE);  
+    //enable FSMC
+    RCC_AHBPeriphClockCmd(RCC_AHBPeriph_FSMC, ENABLE);
+
 }
 
 static inline void post_init_board(GDisplay *g) {
@@ -101,7 +103,8 @@ static inline void post_init_board(GDisplay *g) {
 
 static inline void setpin_reset(GDisplay *g, bool_t state) {
 	(void) g;
-	if (state){
+
+    if (state){
         GPIO_ResetBits(GPIOE, GPIO_Pin_1);
     }else{
         GPIO_SetBits(GPIOE, GPIO_Pin_1);
@@ -113,7 +116,7 @@ static inline void set_backlight(GDisplay *g, uint8_t percent) {
 	if (percent){
         GPIO_SetBits(GPIOD, GPIO_Pin_13);
     }else{
-        GPIO_SetBits(GPIOD, GPIO_Pin_13);
+        GPIO_ResetBits(GPIOD, GPIO_Pin_13);
     }
 
 }
@@ -128,11 +131,13 @@ static inline void release_bus(GDisplay *g) {
 
 static inline void write_index(GDisplay *g, uint16_t index) {
 	(void) g;
+    
 	GDISP_REG = index;
 }
 
 static inline void write_data(GDisplay *g, uint16_t data) {
 	(void) g;
+    
 	GDISP_RAM = data;
 }
 

@@ -97,15 +97,16 @@ LLDSPEC bool_t gdisp_lld_init(GDisplay *g) {
 
 	// No private area for this controller
 	g->priv = 0;
-
 	// Initialise the board interface
 	init_board(g);
 
 	/* Hardware reset */
-	setpin_reset(g, TRUE);
-	gfxSleepMilliseconds(50);
 	setpin_reset(g, FALSE);
-	gfxSleepMilliseconds(50);
+	gfxSleepMilliseconds(200);
+	setpin_reset(g, TRUE);
+	gfxSleepMilliseconds(200);
+	setpin_reset(g, FALSE);
+	gfxSleepMilliseconds(200);
 
 	acquire_bus(g);
 /*	write_index(g, 0);				// Get controller version
@@ -115,8 +116,10 @@ LLDSPEC bool_t gdisp_lld_init(GDisplay *g) {
 */	
     setwritemode(g);
 	write_reg(g, 0xE3, 0x3008); // Set internal timing
-	write_reg(g, 0xE7, 0x0012); // Set internal timing
+	
+    write_reg(g, 0xE7, 0x0012); // Set internal timing
 	write_reg(g, 0xEF, 0x1231); // Set internal timing
+    
     write_reg(g, 0x00, 0x0001); //start Int. osc
     gfxSleepMilliseconds(2);
     write_reg(g, 0x01, 0x0100); //Set SS bit (shift direction of outputs is from S720 to S1)

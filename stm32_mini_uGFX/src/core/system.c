@@ -30,9 +30,11 @@ void SystemInitError(uint8_t error_source);
 
 void SystemInit() {
     /* Enable Power Control clock */
-//    RCC->APB1ENR |= RCC_APB1ENR_PWREN;
+  RCC->APB1ENR |= RCC_APB1ENR_PWREN;
   /* Set HSION bit */
   RCC->CR |= (uint32_t)0x00000001;
+  while ((RCC->CR & RCC_CR_HSIRDY) == 0);
+
   /* Reset SW, HPRE, PPRE1, PPRE2, ADCPRE and MCO bits */
   RCC->CFGR &= (uint32_t)0xF0FF0000;
     

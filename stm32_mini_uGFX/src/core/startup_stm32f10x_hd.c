@@ -1,4 +1,8 @@
- 
+
+
+#include <stm32f10x.h>
+
+
 #define __weak __attribute__((weak))
 #define __weak_alias_Default_Handler(f) void f(void)  __attribute__((weak, alias ("Default_Handler")))
 
@@ -14,8 +18,7 @@ __weak void SystemInit(void){
 //override this func to setup PLL clock which deppends on your MCU
 }
 
-
-int main();
+void  main();
 
 
 void Reset_Handler(void)
@@ -42,7 +45,8 @@ void Reset_Handler(void)
 
 //default interrupt handler
 void Default_Handler(void){
-   while(1);
+                  
+    while(1);
 }
 
 
