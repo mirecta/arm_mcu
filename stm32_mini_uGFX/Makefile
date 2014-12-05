@@ -19,11 +19,12 @@ GFXOBJ := $(patsubst %.c,%.o,$(GFXSRC))
 HAL_PATH := src/hal
 #MODULES := src $(HAL_PATH)/Src
 
-MODULES:= src  src/core src/util  $(HAL_PATH)/src
+
+MODULES:= src  src/rtc src/core src/util  $(HAL_PATH)/src
 INCLUDES:= include $(HAL_PATH)/inc $(GFXINC)
 EXCLUDES:= 
 
-DEFINES:= USE_STDPERIPH_DRIVER $(DEVICE) CPU_FREQ=$(CPU_FREQ) GFX_USE_OS_RAW32=TRUE
+DEFINES:= DEBUG USE_STDPERIPH_DRIVER $(DEVICE) CPU_FREQ=$(CPU_FREQ) GFX_USE_OS_RAW32=TRUE _NOW_=$(shell date +%s)
 INCLUDES += . $(MODULES)
 
 SRC:= $(wildcard *.c *.cc *.s)
