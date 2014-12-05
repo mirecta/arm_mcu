@@ -33,6 +33,28 @@
 #include <time.h>
 
 /* The handles for our three consoles */
+static GHandle ghLabel1;
+ 
+static void createWidgets(void) {
+    GWidgetInit     wi;
+ 
+    // Apply some default values for GWIN
+    wi.customDraw = 0;
+    wi.customParam = 0;
+    wi.customStyle = 0;
+    wi.g.show = TRUE;
+ 
+    // Apply the label parameters   
+    wi.g.y = 0;
+    wi.g.x = 320-60;
+    wi.g.width = 60;
+    wi.g.height = 20;
+    wi.text = "";
+ 
+    // Create the actual label
+    ghLabel1 = gwinLabelCreate(NULL, &wi);
+}
+
 
 int main(void) {
 	font_t	font1;
@@ -47,7 +69,11 @@ int main(void) {
     gdispSetOrientation(GDISP_ROTATE_90);
 	font1 = gdispOpenFont("UI2");
 	gwinSetDefaultFont(font1);
-    
+
+    createWidgets();  
+
+ 
+   
     initDebug(0,240/2,320,240/2);
 
     initRTC();
@@ -65,8 +91,8 @@ int main(void) {
         
         tmp = localtime(&now);
         
-        strftime(outstr, sizeof(outstr), "%02H:%02M:%02S", tmp);
-        DBG("Timestamp %s\n",outstr);
+        strftime(outstr, sizeof(outstr), "%02H:%02M", tmp);
+        gwinSetText(ghLabel1, outstr, TRUE);        
 	}
 }
 

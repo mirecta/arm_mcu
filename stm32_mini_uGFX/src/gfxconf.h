@@ -39,6 +39,10 @@
 /* GFX sub-systems to turn on */
 #define GFX_USE_GDISP			TRUE
 #define GFX_USE_GWIN			TRUE
+#define GFX_USE_GINPUT                               TRUE
+
+#define GINPUT_NEED_MOUSE                            TRUE
+
 
 /* Features for the GDISP sub-system. */
 #define GDISP_NEED_VALIDATION	TRUE
@@ -52,6 +56,8 @@
 /* Features for the GWIN subsystem. */
 #define GWIN_NEED_WINDOWMANAGER	TRUE
 #define GWIN_NEED_CONSOLE		TRUE
+#define GWIN_NEED_LABEL		TRUE
+
 #define GWIN_CONSOLE_ESCSEQ		TRUE
 #define GWIN_CONSOLE_USE_HISTORY	TRUE
 #define GWIN_CONSOLE_HISTORY_AVERAGING	TRUE
