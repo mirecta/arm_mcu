@@ -26,7 +26,6 @@ in gdb
 
 ```
 load
-mon arm semihosting enable
 cont
 ```
 
