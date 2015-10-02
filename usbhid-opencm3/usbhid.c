@@ -29,7 +29,10 @@
 #include <libopencm3/usb/hid.h>
 
 
-
+// analog A0,A1,A2,A3
+// js buttons A8,A9
+// left B4,B5,B6,B7
+// right B12,B13,B14,B15
 
 /* Define this to include the DFU APP interface. */
 //#define INCLUDE_DFU_INTERFACE
@@ -82,7 +85,7 @@ void adc_setup(){
     adc_set_sample_time_on_all_channels(ADC1, ADC_SMPR_SMP_7DOT5CYC);
    
     /* enable adc */
-    adc_on(ADC1);
+    adc_power_on(ADC1);
 
     /* wait for adc starting up*/
     wait();
@@ -132,13 +135,20 @@ void dma_setup(){
     //END ADC
 }
 
+
+void read_buttons(){
+    uint16_t portb = ~gpio_port_read(GPIOB);
+    gr.buttons = 0x00;
+    gr.buttons |=((~gpio_get(GPIOA,GPIO8 | GPIO9) >> 8) & 0x03) | ((portb & 0xf0) >> 2) | ((portb & 0xf000) >> 6);
+}
+
 void dma1_channel1_isr(){
    
     systick_interrupt_disable();
 
     gr.left_x = (result_array_raw[0] >> 4) - 127;
     gr.left_y = (result_array_raw[1] >> 4) - 127;
-    gr.right_x = (result_array_raw[2] >> 4) -127;
+    gr.right_x = 127 - (result_array_raw[2] >> 4);
     gr.right_y = 127 - (result_array_raw[3] >> 4); 
     /* clear the interrupt flag */
     systick_interrupt_enable();
@@ -150,6 +160,7 @@ void clock_setup(){
     rcc_clock_setup_in_hse_8mhz_out_72mhz();
     rcc_periph_clock_enable(RCC_GPIOC);
     rcc_periph_clock_enable(RCC_GPIOA);
+    rcc_periph_clock_enable(RCC_GPIOB);
     rcc_periph_clock_enable(RCC_ADC1);
     rcc_periph_clock_enable(RCC_DMA1);
 //  rcc_periph_clock_enable(RCC_AFIO);
@@ -158,10 +169,11 @@ void clock_setup(){
 void gpio_setup(){
  //   gpio_set_mode(GPIOC, GPIO_MODE_OUTPUT_2_MHZ,GPIO_CNF_OUTPUT_PUSHPULL, GPIO13);
     //ADC
-    gpio_set_mode(GPIOA, GPIO_MODE_INPUT, GPIO_CNF_INPUT_ANALOG, GPIO0);
-    gpio_set_mode(GPIOA, GPIO_MODE_INPUT, GPIO_CNF_INPUT_ANALOG, GPIO1);
-    gpio_set_mode(GPIOA, GPIO_MODE_INPUT, GPIO_CNF_INPUT_ANALOG, GPIO2);
-    gpio_set_mode(GPIOA, GPIO_MODE_INPUT, GPIO_CNF_INPUT_ANALOG, GPIO3);
+    gpio_set_mode(GPIOA, GPIO_MODE_INPUT, GPIO_CNF_INPUT_ANALOG, GPIO0 | GPIO1 | GPIO2 | GPIO3 );
+    gpio_set_mode(GPIOA, GPIO_MODE_INPUT, GPIO_CNF_INPUT_PULL_UPDOWN, GPIO8 | GPIO9);
+    //i want pullup to A8 and A9
+    gpio_set(GPIOA,GPIO8 | GPIO9);
+    gpio_set_mode(GPIOB, GPIO_MODE_INPUT, GPIO_CNF_INPUT_FLOAT, GPIO4 | GPIO5 | GPIO6 | GPIO7 | GPIO12 | GPIO13 | GPIO14 | GPIO15);
 }
 
 
@@ -417,7 +429,7 @@ void sys_tick_handler(void)
 {
 
     //read buttons
-
+    read_buttons();
     //other work made by DMA
 	usbd_ep_write_packet(usbd_dev, 0x81, (const void *) (&gr), sizeof(struct gamepad_report_t));
 }
