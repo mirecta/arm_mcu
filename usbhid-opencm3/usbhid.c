@@ -139,7 +139,7 @@ void dma_setup(){
 void read_buttons(){
     uint16_t portb = ~gpio_port_read(GPIOB);
     gr.buttons = 0x00;
-    gr.buttons |=((~gpio_get(GPIOA,GPIO8 | GPIO9) >> 8) & 0x03) | ((portb & 0xf0) >> 2) | ((portb & 0xf000) >> 6);
+    gr.buttons |=((~gpio_get(GPIOA,GPIO8 | GPIO9 | GPIO10 | GPIO11) >> 8) & 0x0f) | ((portb & 0xf0)) | ((portb & 0xf000) >> 4);
 }
 
 void dma1_channel1_isr(){
@@ -170,9 +170,9 @@ void gpio_setup(){
  //   gpio_set_mode(GPIOC, GPIO_MODE_OUTPUT_2_MHZ,GPIO_CNF_OUTPUT_PUSHPULL, GPIO13);
     //ADC
     gpio_set_mode(GPIOA, GPIO_MODE_INPUT, GPIO_CNF_INPUT_ANALOG, GPIO0 | GPIO1 | GPIO2 | GPIO3 );
-    gpio_set_mode(GPIOA, GPIO_MODE_INPUT, GPIO_CNF_INPUT_PULL_UPDOWN, GPIO8 | GPIO9);
-    //i want pullup to A8 and A9
-    gpio_set(GPIOA,GPIO8 | GPIO9);
+    gpio_set_mode(GPIOA, GPIO_MODE_INPUT, GPIO_CNF_INPUT_PULL_UPDOWN, GPIO8 | GPIO9 | GPIO10 | GPIO11);
+    //i want pullup to A8, A9, A10, A11 
+    gpio_set(GPIOA,GPIO8 | GPIO9 | GPIO10 | GPIO11);
     gpio_set_mode(GPIOB, GPIO_MODE_INPUT, GPIO_CNF_INPUT_FLOAT, GPIO4 | GPIO5 | GPIO6 | GPIO7 | GPIO12 | GPIO13 | GPIO14 | GPIO15);
 }
 
