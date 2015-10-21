@@ -1,5 +1,3 @@
 # README
 
-This example implements a USB Human Interface Device (HID)
-to demonstrate the use of the USB device stack.
-
+This is my gamepad used in my retro game console 12 buttons and 4 analog axes :)
