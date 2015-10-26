@@ -17,20 +17,212 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+
+/*help
+
+
+keycodes http://www.mindrunway.ru/IgorPlHex/USBKeyScan.pdf
+out endpoint  https://github.com/openstenoproject/stenosaurus/blob/master/bootloader/usb.c
+
+  */
+
+
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <libopencm3/stm32/rcc.h>
 #include <libopencm3/stm32/gpio.h>
 #include <libopencm3/stm32/i2c.h>
+#include <libopencm3/cm3/nvic.h>
+#include <libopencm3/cm3/systick.h>
+#include <libopencm3/usb/usbd.h>
+#include <libopencm3/usb/hid.h>
 
 #include "lcdi2c.h"
 
 extern void  initialise_monitor_handles(void);
+static usbd_device *usbd_dev;
+
+struct keyboard_report_t
+{
+    uint8_t modifier;
+    uint8_t reserved;
+    uint8_t keycode[6];
+}__attribute__ ((packed));
+
+struct keyboard_report_t kr;
+
+const struct usb_device_descriptor dev_descr = {
+	.bLength = USB_DT_DEVICE_SIZE,
+	.bDescriptorType = USB_DT_DEVICE,
+	.bcdUSB = 0x0200,
+	.bDeviceClass = 0,
+	.bDeviceSubClass = 0,
+	.bDeviceProtocol = 0,
+	.bMaxPacketSize0 = 64,
+	.idVendor = 0x0483,
+	.idProduct = 0x5710,
+	.bcdDevice = 0x0200,
+	.iManufacturer = 1,
+	.iProduct = 2,
+	.iSerialNumber = 3,
+	.bNumConfigurations = 1,
+};
+
+
+
+static const uint8_t hid_report_descriptor[] = {
+    0x05, 0x01,                    // USAGE_PAGE (Generic Desktop)
+    0x09, 0x06,                    // USAGE (Keyboard)
+    0xa1, 0x01,                    // COLLECTION (Application)
+    0x05, 0x07,                    //   USAGE_PAGE (Keyboard)
+    0x19, 0xe0,                    //   USAGE_MINIMUM (Keyboard LeftControl)
+    0x29, 0xe7,                    //   USAGE_MAXIMUM (Keyboard Right GUI)
+    0x15, 0x00,                    //   LOGICAL_MINIMUM (0)
+    0x25, 0x01,                    //   LOGICAL_MAXIMUM (1)
+    0x75, 0x01,                    //   REPORT_SIZE (1)
+    0x95, 0x08,                    //   REPORT_COUNT (8)
+    0x81, 0x02,                    //   INPUT (Data,Var,Abs)
+    0x95, 0x01,                    //   REPORT_COUNT (1)
+    0x75, 0x08,                    //   REPORT_SIZE (8)
+    0x81, 0x03,                    //   INPUT (Cnst,Var,Abs)
+    0x95, 0x40,                    //   REPORT_COUNT (64)
+    0x75, 0x08,                    //   REPORT_SIZE (8)
+    0x05, 0x14,                    //   USAGE_PAGE (Alphnumeric Display)
+    0x19, 0x00,                    //   USAGE_MINIMUM (0)
+    0x29, 0xff,                    //   USAGE_MAXIMUM (255)
+    0x91, 0x00,                    //   OUTPUT (Data,Ary,Abs)
+    0x95, 0x06,                    //   REPORT_COUNT (6)
+    0x75, 0x08,                    //   REPORT_SIZE (8)
+    0x15, 0x00,                    //   LOGICAL_MINIMUM (0)
+    0x25, 0x65,                    //   LOGICAL_MAXIMUM (101)
+    0x05, 0x07,                    //   USAGE_PAGE (Keyboard)
+    0x19, 0x00,                    //   USAGE_MINIMUM (Reserved (no event indicated))
+    0x29, 0x65,                    //   USAGE_MAXIMUM (Keyboard Application)
+    0x81, 0x00,                    //   INPUT (Data,Ary,Abs)
+    0xc0                           // END_COLLECTION
+};
+
+static const struct {
+	struct usb_hid_descriptor hid_descriptor;
+	struct {
+		uint8_t bReportDescriptorType;
+		uint16_t wDescriptorLength;
+	} __attribute__((packed)) hid_report;
+} __attribute__((packed)) hid_function = {
+	.hid_descriptor = {
+		.bLength = sizeof(hid_function),
+		.bDescriptorType = USB_DT_HID,
+	 	.bcdHID = 0x0100,
+		.bCountryCode = 0,
+		.bNumDescriptors = 1,
+	},
+	.hid_report = {
+		.bReportDescriptorType = USB_DT_REPORT,
+		.wDescriptorLength = sizeof(hid_report_descriptor),
+	}
+};
+
+const struct usb_endpoint_descriptor hid_endpoint = {
+	.bLength = USB_DT_ENDPOINT_SIZE,
+	.bDescriptorType = USB_DT_ENDPOINT,
+	.bEndpointAddress = 0x81,
+	.bmAttributes = USB_ENDPOINT_ATTR_INTERRUPT,
+	.wMaxPacketSize = sizeof(struct keyboard_report_t),
+	.bInterval = 0x20,
+};
+
+const struct usb_interface_descriptor hid_iface = {
+	.bLength = USB_DT_INTERFACE_SIZE,
+	.bDescriptorType = USB_DT_INTERFACE,
+	.bInterfaceNumber = 0,
+	.bAlternateSetting = 0,
+	.bNumEndpoints = 1,
+	.bInterfaceClass = USB_CLASS_HID,
+	.bInterfaceSubClass = 1, /* boot */
+	.bInterfaceProtocol = 1, /* keyboard */
+	.iInterface = 0,
+
+	.endpoint = &hid_endpoint,
+
+	.extra = &hid_function,
+	.extralen = sizeof(hid_function),
+};
+
+
+
+
+
+const struct usb_config_descriptor::usb_interface  ifaces[] = {
+    {
+        0,1,0,&hid_iface
+	//.num_altsetting = 1,
+	//.altsetting = &hid_iface,
+    }
+};
+
+const struct usb_config_descriptor config = {
+	.bLength = USB_DT_CONFIGURATION_SIZE,
+	.bDescriptorType = USB_DT_CONFIGURATION,
+	.wTotalLength = 0,
+	.bNumInterfaces = 1,
+	.bConfigurationValue = 1,
+	.iConfiguration = 0,
+	.bmAttributes = 0xC0,
+	.bMaxPower = 0x32,
+
+	.interface =  ifaces,
+};
+
+static const char *usb_strings[] = {
+	"mIRECta tech.",
+	"HID Keyboard",
+	"Keyboard",
+};
+
+/* Buffer to be used for control requests. */
+uint8_t usbd_control_buffer[128];
+
+static int hid_control_request(usbd_device *dev, struct usb_setup_data *req, uint8_t **buf, uint16_t *len,
+			int (**complete)(usbd_device *, struct usb_setup_data *))
+{
+	(void)complete;
+	(void)dev;
+
+	if((req->bmRequestType != 0x81) ||
+	   (req->bRequest != USB_REQ_GET_DESCRIPTOR) ||
+	   (req->wValue != 0x2200))
+		return 0;
+
+	/* Handle the HID report descriptor. */
+	*buf = (uint8_t *)hid_report_descriptor;
+	*len = sizeof(hid_report_descriptor);
+
+	return 1;
+}
+
+static void hid_set_config(usbd_device *dev, uint16_t wValue)
+{
+	(void)wValue;
+	(void)dev;
+
+	usbd_ep_setup(dev, 0x81, USB_ENDPOINT_ATTR_INTERRUPT, 4, NULL);
+
+	usbd_register_control_callback(
+				dev,
+				USB_REQ_TYPE_STANDARD | USB_REQ_TYPE_INTERFACE,
+				USB_REQ_TYPE_TYPE | USB_REQ_TYPE_RECIPIENT,
+				hid_control_request);
+
+	systick_set_clocksource(STK_CSR_CLKSOURCE_AHB_DIV8);
+	/* SysTick interrupt every N clock pulses: set reload to N-1 */
+	systick_set_reload(99999);
+	systick_interrupt_enable();
+	systick_counter_enable();
+}
+
 
 void i2c_setup(){
-    rcc_periph_clock_enable(RCC_GPIOB);
-    rcc_periph_clock_enable(RCC_I2C1);
-    rcc_periph_clock_enable(RCC_AFIO);
    
     /* Enable clocks for I2C2 and AFIO. */
 
@@ -71,17 +263,39 @@ void i2c_setup(){
 }
 
 
-
+void clock_setup(){
+    rcc_clock_setup_in_hse_8mhz_out_72mhz();
+    rcc_periph_clock_enable(RCC_GPIOB);
+    rcc_periph_clock_enable(RCC_I2C1);
+    rcc_periph_clock_enable(RCC_AFIO);
+    rcc_periph_clock_enable(RCC_GPIOE);
+    rcc_periph_clock_enable(RCC_GPIOC);
+}
 
 void gpio_setup(){
 
-    rcc_periph_clock_enable(RCC_GPIOE);
     gpio_set_mode(GPIOE, GPIO_MODE_OUTPUT_50_MHZ,
             GPIO_CNF_OUTPUT_PUSHPULL, GPIO5);
-
+    gpio_set_mode(GPIOC, GPIO_MODE_INPUT, GPIO_CNF_INPUT_PULL_UPDOWN, GPIO1);
+    gpio_set(GPIOC,GPIO1);
 
 }
 
+void read_buttons(){
+uint16_t portc = ~gpio_port_read(GPIOC);
+
+if (portc & 0x0002){
+
+    kr.keycode[0] = 0x04;
+
+}
+else{
+    kr.keycode[0] = 0;
+}
+
+
+
+}
 LcdI2c lcd(0x20,4,5,6,7);
 
 
@@ -90,7 +304,7 @@ LcdI2c lcd(0x20,4,5,6,7);
 int main(void)
 {
     int i;
-    rcc_clock_setup_in_hse_8mhz_out_72mhz();
+    clock_setup();
     gpio_setup();
     i2c_setup();
 
@@ -103,13 +317,23 @@ int main(void)
 #if defined(ENABLE_SEMIHOSTING) && (ENABLE_SEMIHOSTING) 
     initialise_monitor_handles();
 #endif
-    while (1)
-    {
-        gpio_toggle(GPIOE, GPIO5); /* LED on/off */
-    printf("hello world\n");
-        for (i = 0; i < 2400000; i++)    /* Wait a bit. */
-            __asm__("nop");
-   
-    }
+    
+
+	usbd_dev = usbd_init(&stm32f103_usb_driver, &dev_descr, &config, usb_strings, 3, usbd_control_buffer, sizeof(usbd_control_buffer));
+	usbd_register_set_config_callback(usbd_dev, hid_set_config);
+
+
+	while (1)
+		usbd_poll(usbd_dev);
 }
+
+void sys_tick_handler(void)
+{
+    //gpio_toggle(GPIOE,GPIO5);
+    //read buttons
+    read_buttons();
+    //other work made by DMA
+	usbd_ep_write_packet(usbd_dev, 0x81, (const void *) (&kr), sizeof(struct keyboard_report_t));
+}
+    
 
