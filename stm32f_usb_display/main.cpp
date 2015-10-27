@@ -41,7 +41,13 @@ out endpoint  https://github.com/openstenoproject/stenosaurus/blob/master/bootlo
 #include "lcdi2c.h"
 
 extern void  initialise_monitor_handles(void);
+
+
+
 static usbd_device *usbd_dev;
+
+LcdI2c lcd(0x20,4,5,6,7);
+
 
 struct keyboard_report_t
 {
@@ -49,6 +55,9 @@ struct keyboard_report_t
     uint8_t reserved;
     uint8_t keycode[6];
 }__attribute__ ((packed));
+
+static uint8_t hid_buffer[64];
+
 
 struct keyboard_report_t kr;
 
@@ -123,27 +132,39 @@ static const struct {
 	}
 };
 
-const struct usb_endpoint_descriptor hid_endpoint = {
-	.bLength = USB_DT_ENDPOINT_SIZE,
-	.bDescriptorType = USB_DT_ENDPOINT,
-	.bEndpointAddress = 0x81,
-	.bmAttributes = USB_ENDPOINT_ATTR_INTERRUPT,
-	.wMaxPacketSize = sizeof(struct keyboard_report_t),
-	.bInterval = 0x20,
-};
+const struct usb_endpoint_descriptor hid_endpoints[] = {
+    {USB_DT_ENDPOINT_SIZE,USB_DT_ENDPOINT,0x81,USB_ENDPOINT_ATTR_INTERRUPT,sizeof(struct keyboard_report_t),0x20,0,0 },
+    {USB_DT_ENDPOINT_SIZE,USB_DT_ENDPOINT,0x01,USB_ENDPOINT_ATTR_INTERRUPT,64,0x20,0,0 },};
+/*
+    hid_endpoints[0].bLength = USB_DT_ENDPOINT_SIZE;
+    hid_endpoints[0].bDescriptorType = USB_DT_ENDPOINT;
+    hid_endpoints[0].bEndpointAddress = 0x81;
+    hid_endpoints[0].bmAttributes = USB_ENDPOINT_ATTR_INTERRUPT;
+    hid_endpoints[0].wMaxPacketSize = sizeof(struct keyboard_report_t);
+    hid_endpoints[0].bInterval = 0x20;
+    
+    hid_endpoints[1].bLength = USB_DT_ENDPOINT_SIZE;
+    hid_endpoints[1].bDescriptorType = USB_DT_ENDPOINT;
+    hid_endpoints[1].bEndpointAddress = 0x01;
+    hid_endpoints[1].bmAttributes = USB_ENDPOINT_ATTR_INTERRUPT;
+    hid_endpoints[1].wMaxPacketSize = 64;
+    hid_endpoints[1].bInterval = 0x20;
+
+*/
+    
 
 const struct usb_interface_descriptor hid_iface = {
 	.bLength = USB_DT_INTERFACE_SIZE,
 	.bDescriptorType = USB_DT_INTERFACE,
 	.bInterfaceNumber = 0,
 	.bAlternateSetting = 0,
-	.bNumEndpoints = 1,
+	.bNumEndpoints =2,
 	.bInterfaceClass = USB_CLASS_HID,
 	.bInterfaceSubClass = 1, /* boot */
 	.bInterfaceProtocol = 1, /* keyboard */
 	.iInterface = 0,
 
-	.endpoint = &hid_endpoint,
+	.endpoint = hid_endpoints,
 
 	.extra = &hid_function,
 	.extralen = sizeof(hid_function),
@@ -201,12 +222,26 @@ static int hid_control_request(usbd_device *dev, struct usb_setup_data *req, uin
 	return 1;
 }
 
+
+static void endpoint_callback(usbd_device *_usbd_dev, uint8_t ep) {
+    uint16_t bytes_read = usbd_ep_read_packet(_usbd_dev,ep,hid_buffer,sizeof(hid_buffer));
+    (void)bytes_read;
+
+
+    //process packet
+    //commands: clear, clearline , printline, backlight 
+    lcd.print(0,"Fuck Ya !!!!");
+}
+
 static void hid_set_config(usbd_device *dev, uint16_t wValue)
 {
 	(void)wValue;
 	(void)dev;
 
 	usbd_ep_setup(dev, 0x81, USB_ENDPOINT_ATTR_INTERRUPT, 4, NULL);
+     // Set up endpoint 1 for data coming OUT from the host.
+    usbd_ep_setup(dev, 0x01, USB_ENDPOINT_ATTR_INTERRUPT, 64, endpoint_callback);
+
 
 	usbd_register_control_callback(
 				dev,
@@ -296,7 +331,6 @@ else{
 
 
 }
-LcdI2c lcd(0x20,4,5,6,7);
 
 
     

@@ -90,7 +90,7 @@ void LcdI2c::init(void){
 void LcdI2c::clear(void){
     cmd8(LCD_CLEARDISPLAY);
 }
-void LcdI2c::print(uint8_t line, const char *string){
+const char* LcdI2c::print(uint8_t line, const char *string){
 
 //set row addr
     const uint8_t row_offsetsDef[]   = { 0x00, 0x40, 0x14, 0x54 }; // For regular LCDs
@@ -99,6 +99,8 @@ void LcdI2c::print(uint8_t line, const char *string){
     
     while(*c)
         data8(*c++);
+    
+    return (c + 1); 
 }
 
 
