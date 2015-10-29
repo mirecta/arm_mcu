@@ -176,10 +176,8 @@ if __name__ == "__main__":
     
     
     lcd.clear()
-    lcd.backlight(0)
-    time.sleep(1)
     lcd.backlight(1)
     lcd.gotoxy(0,0)
-    lcd.prints("Test from PC")
+    lcd.prints("Hello world")
 
 

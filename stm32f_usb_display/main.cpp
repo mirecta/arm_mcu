@@ -363,22 +363,24 @@ void clock_setup(){
     rcc_periph_clock_enable(RCC_GPIOB);
     rcc_periph_clock_enable(RCC_I2C1);
     rcc_periph_clock_enable(RCC_AFIO);
-    rcc_periph_clock_enable(RCC_GPIOE);
-    rcc_periph_clock_enable(RCC_GPIOC);
+    rcc_periph_clock_enable(RCC_GPIOA);
+//    rcc_periph_clock_enable(RCC_GPIOC);
 }
 
 void gpio_setup(){
 
-    gpio_set_mode(GPIOE, GPIO_MODE_OUTPUT_50_MHZ,
-            GPIO_CNF_OUTPUT_PUSHPULL, GPIO5);
-    gpio_set_mode(GPIOC, GPIO_MODE_INPUT, GPIO_CNF_INPUT_PULL_UPDOWN, GPIO1);
-    gpio_set(GPIOC,GPIO1);
+    //gpio_set_mode(GPIOE, GPIO_MODE_OUTPUT_50_MHZ,GPIO_CNF_OUTPUT_PUSHPULL, GPIO5);
+   
+
+
+    gpio_set_mode(GPIOB, GPIO_MODE_INPUT, GPIO_CNF_INPUT_PULL_UPDOWN, GPIO15| GPIO14| GPIO0| GPIO1);
+    gpio_set(GPIOB,GPIO15| GPIO14| GPIO0| GPIO1);
 
 }
 
 void read_buttons(){
 //keys 
-uint16_t portc = ~gpio_port_read(GPIOC);
+uint16_t portb = ~gpio_port_read(GPIOB);
 
    kr.modifier = 0x00;
    kr.reserved = 0x00;
@@ -389,15 +391,29 @@ uint16_t portc = ~gpio_port_read(GPIOC);
    kr.keycode[4] = 0x00;
    kr.keycode[5] = 0x00;
 
+   uint8_t stroke_id= 0;
+
+
+
+   if (portb & 0x8000){
+
+       kr.keycode[stroke_id++] = 0x04;
+   }
    
-if (portc & 0x0002){
+   if (portb & 0x4000){
 
-    kr.keycode[0] = 0x04;
+       kr.keycode[stroke_id++] = 0x05;
+   }
+   if (portb & 0x0001){
 
-}
-else{
-    kr.keycode[0] = 0;
-}
+       kr.keycode[stroke_id++] = 0x06;
+   }
+   if (portb & 0x0002){
+
+       kr.keycode[stroke_id++] = 0x07;
+   }
+
+
 
 
 
@@ -409,8 +425,8 @@ else{
 int main(void)
 {
     clock_setup();
-    gpio_setup();
     i2c_setup();
+    gpio_setup();
 
     lcd.init();
 

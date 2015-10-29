@@ -84,7 +84,7 @@ void LcdI2c::init(void){
     cmd8(LCD_CLEARDISPLAY);
     delay(100000);
 
-    setBacklight(1);
+    setBacklight(0);
 
 
 }
