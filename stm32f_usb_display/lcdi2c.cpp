@@ -61,6 +61,7 @@ void LcdI2c::delay( const uint32_t loop){
 }
 void LcdI2c::init(void){
 
+    //switch to 4 bit mode 
     send4(0x03,LCD_CMD);
     delay(100000);
     send4(0x03,LCD_CMD);
@@ -69,8 +70,9 @@ void LcdI2c::init(void){
     delay(100000);
     send4(0x02,LCD_CMD);
     delay(100000);
+    //done
 
-    
+    //setup driver
     cmd8(LCD_FUNCTIONSET |  LCD_4BITMODE | LCD_2LINE | LCD_5x8DOTS);
     delay(100000);
     cmd8(LCD_CURSORSHIFT | LCD_MOVERIGHT | LCD_CURSORMOVE );
@@ -90,18 +92,34 @@ void LcdI2c::init(void){
 void LcdI2c::clear(void){
     cmd8(LCD_CLEARDISPLAY);
 }
-const char* LcdI2c::print(uint8_t line, const char *string){
 
+void LcdI2c::gotoxy(uint8_t x, uint8_t y){
 //set row addr
     const uint8_t row_offsetsDef[]   = { 0x00, 0x40, 0x14, 0x54 }; // For regular LCDs
-    const char *c = string;
-    cmd8(LCD_SETDDRAMADDR | (row_offsetsDef[line]));
+    cmd8(LCD_SETDDRAMADDR | ((row_offsetsDef[y]) + x));
     
+}
+
+const char* LcdI2c::print(const char *string){
+
+    const char *c = string;
     while(*c)
         data8(*c++);
-    
-    return (c + 1); 
+    //++ because we point to nex valid data and must skip \0 char   
+    return (++c); 
 }
+
+
+const char* LcdI2c::print(const char *string, uint8_t size){
+
+   const char *c = string;
+   while (size){
+       data8(*c++);
+       --size;
+   }
+   return (c);
+}
+
 
 
 void LcdI2c::setBacklight(const uint8_t value){

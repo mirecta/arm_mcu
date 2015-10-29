@@ -14,9 +14,11 @@ class LcdI2c {
     void setBacklight(uint8_t value);
     void init(void);
     void clear(void);
-    const char* print(const uint8_t line, const char *string);
-        
-
+    void gotoxy(uint8_t x, uint8_t y);
+    
+    const char* print(const char *string);
+    const char* print(const char *string, uint8_t size);      
+  
     private:
       void data8(const uint8_t data);
       void send4(const uint8_t data, const uint8_t type);

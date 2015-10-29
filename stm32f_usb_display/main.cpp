@@ -48,6 +48,8 @@ static usbd_device *usbd_dev;
 
 LcdI2c lcd(0x20,4,5,6,7);
 
+#define MAX_PACKET_SIZE 64
+
 
 struct keyboard_report_t
 {
@@ -56,7 +58,6 @@ struct keyboard_report_t
     uint8_t keycode[6];
 }__attribute__ ((packed));
 
-static uint8_t hid_buffer[64];
 
 
 struct keyboard_report_t kr;
@@ -68,7 +69,7 @@ const struct usb_device_descriptor dev_descr = {
 	.bDeviceClass = 0,
 	.bDeviceSubClass = 0,
 	.bDeviceProtocol = 0,
-	.bMaxPacketSize0 = 64,
+	.bMaxPacketSize0 = MAX_PACKET_SIZE,
 	.idVendor = 0x0483,
 	.idProduct = 0x5710,
 	.bcdDevice = 0x0200,
@@ -95,12 +96,6 @@ static const uint8_t hid_report_descriptor[] = {
     0x95, 0x01,                    //   REPORT_COUNT (1)
     0x75, 0x08,                    //   REPORT_SIZE (8)
     0x81, 0x03,                    //   INPUT (Cnst,Var,Abs)
-    0x95, 0x40,                    //   REPORT_COUNT (64)
-    0x75, 0x08,                    //   REPORT_SIZE (8)
-    0x05, 0x14,                    //   USAGE_PAGE (Alphnumeric Display)
-    0x19, 0x00,                    //   USAGE_MINIMUM (0)
-    0x29, 0xff,                    //   USAGE_MAXIMUM (255)
-    0x91, 0x00,                    //   OUTPUT (Data,Ary,Abs)
     0x95, 0x06,                    //   REPORT_COUNT (6)
     0x75, 0x08,                    //   REPORT_SIZE (8)
     0x15, 0x00,                    //   LOGICAL_MINIMUM (0)
@@ -109,6 +104,14 @@ static const uint8_t hid_report_descriptor[] = {
     0x19, 0x00,                    //   USAGE_MINIMUM (Reserved (no event indicated))
     0x29, 0x65,                    //   USAGE_MAXIMUM (Keyboard Application)
     0x81, 0x00,                    //   INPUT (Data,Ary,Abs)
+    0x95, MAX_PACKET_SIZE,         //   REPORT_COUNT (MAX_PACKET_SIZE)
+    0x75, 0x08,                    //   REPORT_SIZE (8)
+    0x06, 0x00, 0xFF,              //   USAGE_PAGE (Vendor Defined Page 1)
+    0x19, 0x01,                    //   USAGE_MINIMUM (1)
+    0x15, 0x00,                    //   LOGICAL_MINIMUM (0)
+    0x25, 0xff,                    //   LOGICAL_MAXIMUM (255)
+    0x29, 0x40,                    //   USAGE_MAXIMUM (64)
+    0x91, 0x00,                    //   OUTPUT (Data,Ary,Abs)
     0xc0                           // END_COLLECTION
 };
 
@@ -134,7 +137,7 @@ static const struct {
 
 const struct usb_endpoint_descriptor hid_endpoints[] = {
     {USB_DT_ENDPOINT_SIZE,USB_DT_ENDPOINT,0x81,USB_ENDPOINT_ATTR_INTERRUPT,sizeof(struct keyboard_report_t),0x20,0,0 },
-    {USB_DT_ENDPOINT_SIZE,USB_DT_ENDPOINT,0x01,USB_ENDPOINT_ATTR_INTERRUPT,64,0x20,0,0 },};
+    {USB_DT_ENDPOINT_SIZE,USB_DT_ENDPOINT,0x01,USB_ENDPOINT_ATTR_INTERRUPT,MAX_PACKET_SIZE,0x20,0,0 },};
 /*
     hid_endpoints[0].bLength = USB_DT_ENDPOINT_SIZE;
     hid_endpoints[0].bDescriptorType = USB_DT_ENDPOINT;
@@ -160,7 +163,7 @@ const struct usb_interface_descriptor hid_iface = {
 	.bAlternateSetting = 0,
 	.bNumEndpoints =2,
 	.bInterfaceClass = USB_CLASS_HID,
-	.bInterfaceSubClass = 1, /* boot */
+	.bInterfaceSubClass = 0, /* boot */
 	.bInterfaceProtocol = 1, /* keyboard */
 	.iInterface = 0,
 
@@ -224,13 +227,70 @@ static int hid_control_request(usbd_device *dev, struct usb_setup_data *req, uin
 
 
 static void endpoint_callback(usbd_device *_usbd_dev, uint8_t ep) {
+    uint8_t hid_buffer[MAX_PACKET_SIZE + 1];
+
     uint16_t bytes_read = usbd_ep_read_packet(_usbd_dev,ep,hid_buffer,sizeof(hid_buffer));
-    (void)bytes_read;
-
-
     //process packet
-    //commands: clear, clearline , printline, backlight 
-    lcd.print(0,"Fuck Ya !!!!");
+    /*commands: 0x00 - NOP
+                0x01 - clear
+                0x02 - off backlight
+                0x03 - on backlight
+                0x04 0xXX 0xYY - gotoxy to position X and Y
+                0x05 0xSS ...... - print string with S size 
+    */
+    uint8_t i = 0;
+    while (i < MAX_PACKET_SIZE){
+        switch (hid_buffer[i]){
+         
+            case 0x00: // NOP
+                ++i;
+                break;
+
+            case 0x01: // clear display
+                lcd.clear();
+                ++i;
+                break;
+
+            case 0x02: // backlight off
+                lcd.setBacklight(0);
+                ++i;
+                break;
+
+            case 0x03: // backlight on 
+                lcd.setBacklight(1);
+                ++i;
+                break;
+
+           case 0x04: // gotoxy
+                if ( i + 2 < MAX_PACKET_SIZE){
+                 lcd.gotoxy(hid_buffer[i+1],hid_buffer[i+2]);
+                }
+                i+=3;
+                break;
+
+           case 0x05: //print
+                if (i + 1 < MAX_PACKET_SIZE){
+                    if (i + 1 + hid_buffer[i+1] <  MAX_PACKET_SIZE){
+                        lcd.print( (char*) &hid_buffer[i+2], hid_buffer[i+1]);
+                        i+= hid_buffer[i+1] + 2;
+                    
+                    }else{
+                        i= MAX_PACKET_SIZE;
+                    }
+                }else{
+                 i = MAX_PACKET_SIZE;
+                }
+               break;
+            default:
+               i = MAX_PACKET_SIZE;
+               break;
+
+        }
+
+    }
+    
+  
+
 }
 
 static void hid_set_config(usbd_device *dev, uint16_t wValue)
@@ -238,9 +298,9 @@ static void hid_set_config(usbd_device *dev, uint16_t wValue)
 	(void)wValue;
 	(void)dev;
 
-	usbd_ep_setup(dev, 0x81, USB_ENDPOINT_ATTR_INTERRUPT, 4, NULL);
+	usbd_ep_setup(dev, 0x81, USB_ENDPOINT_ATTR_INTERRUPT, sizeof(keyboard_report_t), NULL);
      // Set up endpoint 1 for data coming OUT from the host.
-    usbd_ep_setup(dev, 0x01, USB_ENDPOINT_ATTR_INTERRUPT, 64, endpoint_callback);
+    usbd_ep_setup(dev, 0x01, USB_ENDPOINT_ATTR_INTERRUPT, MAX_PACKET_SIZE, endpoint_callback);
 
 
 	usbd_register_control_callback(
@@ -317,8 +377,19 @@ void gpio_setup(){
 }
 
 void read_buttons(){
+//keys 
 uint16_t portc = ~gpio_port_read(GPIOC);
 
+   kr.modifier = 0x00;
+   kr.reserved = 0x00;
+   kr.keycode[0] = 0x00;
+   kr.keycode[1] = 0x00;
+   kr.keycode[2] = 0x00;
+   kr.keycode[3] = 0x00;
+   kr.keycode[4] = 0x00;
+   kr.keycode[5] = 0x00;
+
+   
 if (portc & 0x0002){
 
     kr.keycode[0] = 0x04;
@@ -337,16 +408,11 @@ else{
 
 int main(void)
 {
-    int i;
     clock_setup();
     gpio_setup();
     i2c_setup();
 
     lcd.init();
-    lcd.print(0,"Jeden");
-    lcd.print(1,"Dva");
-    lcd.print(2,"Tri");
-    lcd.print(3,"Styri");
 
 #if defined(ENABLE_SEMIHOSTING) && (ENABLE_SEMIHOSTING) 
     initialise_monitor_handles();
@@ -366,8 +432,7 @@ void sys_tick_handler(void)
     //gpio_toggle(GPIOE,GPIO5);
     //read buttons
     read_buttons();
-    //other work made by DMA
-	usbd_ep_write_packet(usbd_dev, 0x81, (const void *) (&kr), sizeof(struct keyboard_report_t));
+    usbd_ep_write_packet(usbd_dev, 0x81, (const void *) (&kr), sizeof(struct keyboard_report_t));
 }
     
 
