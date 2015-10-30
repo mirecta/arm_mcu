@@ -137,7 +137,7 @@ class HidLcd:
         """
         """
         data = chr(0x00) + chr(0x05) + chr(len(s)) + s
-        #data += '\0' * (64 - len(data)) 
+        data += '\0' * (64 - len(data)) 
         self.fd.write(data);
         self.fd.flush();
     #enddef
