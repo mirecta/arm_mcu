@@ -373,8 +373,7 @@ void gpio_setup(){
    
 
 
-    gpio_set_mode(GPIOB, GPIO_MODE_INPUT, GPIO_CNF_INPUT_PULL_UPDOWN, GPIO15| GPIO14| GPIO0| GPIO1);
-    gpio_set(GPIOB,GPIO15| GPIO14| GPIO0| GPIO1);
+    gpio_set_mode(GPIOB, GPIO_MODE_INPUT, GPIO_CNF_INPUT_FLOAT, GPIO15| GPIO14| GPIO13| GPIO12);
 
 }
 
@@ -397,20 +396,20 @@ uint16_t portb = ~gpio_port_read(GPIOB);
 
    if (portb & 0x8000){
 
-       kr.keycode[stroke_id++] = 0x04;
+       kr.keycode[stroke_id++] = 0x06;
    }
    
    if (portb & 0x4000){
 
-       kr.keycode[stroke_id++] = 0x05;
-   }
-   if (portb & 0x0001){
-
-       kr.keycode[stroke_id++] = 0x06;
-   }
-   if (portb & 0x0002){
-
        kr.keycode[stroke_id++] = 0x07;
+   }
+   if (portb & 0x2000){
+
+       kr.keycode[stroke_id++] = 0x04;
+   }
+   if (portb & 0x1000){
+
+       kr.keycode[stroke_id++] = 0x05;
    }
 
 
@@ -438,6 +437,21 @@ int main(void)
 	usbd_dev = usbd_init(&stm32f103_usb_driver, &dev_descr, &config, usb_strings, 3, usbd_control_buffer, sizeof(usbd_control_buffer));
 	usbd_register_set_config_callback(usbd_dev, hid_set_config);
 
+    lcd.clear();
+    lcd.delay(200000); 
+    lcd.setBacklight(1);
+    lcd.gotoxy(0,0);
+    lcd.print("  Mapy.cz Panorama  ");
+    lcd.gotoxy(0,1);
+    lcd.print("       Krosna       ");
+    lcd.gotoxy(0,2);
+    lcd.print(" remote controller  ");
+    lcd.gotoxy(0,3);
+    lcd.print("       v1.0         ");
+    
+    lcd.delay(30000000);
+    lcd.setBacklight(0);
+    lcd.clear();
 
 	while (1)
 		usbd_poll(usbd_dev);
