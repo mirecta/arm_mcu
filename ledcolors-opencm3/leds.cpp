@@ -3,9 +3,16 @@
 
 #include <libopencm3/stm32/rcc.h>
 #include <libopencm3/stm32/gpio.h>
+#include <stdlib.h>
+
 #include "ws2812.h"
 
 
+#define MAX_L 50
+
+uint8_t updown[LED_COUNT];
+uint8_t hue = 0;
+uint8_t saturation = 250;
 
 
 void delay( const uint32_t loop){
@@ -30,51 +37,61 @@ void gpio_setup(void){
 
 int main(void){
 
-clock_setup();
-gpio_setup();
-gpio_set(GPIOE, GPIO5);
-   ws2812Init(0);
-
-   
-
-for(int i = 0; i < 30; ++i)
-{
-
-    ws2812SetPixelHSL(i,i*8,240,i);
-}
-
-   ws2812Sync();
-             delay(5000);
+    clock_setup();
+    gpio_setup();
+    gpio_set(GPIOE, GPIO5);
+    ws2812Init(1);
 
 
-while (1) {
-            while(!ws2812IsReady());
-             ws2812RotateRight();
-             
-            delay(200000);
-             ws2812Sync();
+    int changed = 0;
+
+    for(int i = 0; i < LED_COUNT; ++i)
+    {
+
+        ws2812SetPixelHSL(i,hue/*rand()%256*/,240,rand()%MAX_L);
+        updown[i]=rand()%2;
+
+    }
+
+    ws2812Sync();
+    delay(5000);
 
 
-            /* Manually: */
-            // GPIOC_BSRR = GPIO12;     /* LED off */
-            // for (i = 0; i < 800000; i++) /* Wait a bit. */
-            //  __asm__("nop");
-            // GPIOC_BRR = GPIO12;      /* LED on */
-            // for (i = 0; i < 800000; i++) /* Wait a bit. */
-            //  __asm__("nop");
+    while (1) {
+        //           ws2812RotateRight();
 
-            /* Using API functions gpio_set()/gpio_clear(): */
-            // gpio_set(GPIOC, GPIO12); /* LED off */
-            // for (i = 0; i < 800000; i++) /* Wait a bit. */
-            //  __asm__("nop");
-            // gpio_clear(GPIOC, GPIO12);   /* LED o
+        for(int i = 0; i < LED_COUNT; ++i)
+        {
+            if(updown[i] == 0){
+                if(line[i].c == 0){
+                    line[i].a = hue;
+                    line[i].b = saturation;
+                    changed++;
+                    ++line[i].c;
+                    updown[i] = 1;
+                }else{
+                    --line[i].c;
+                }
+            }else{
+                if(line[i].c == MAX_L){
+                    --line[i].c;
+                    updown[i] = 0;
+                }else{
+                    ++line[i].c;
+                }
 
-//             gpio_toggle(GPIOE, GPIO5);
-            // delay(5000000);
+            }
+        }
+        if (changed >= 2*LED_COUNT){
+           // hue +=32;
+           hue = (rand()%8)*32;
+            saturation=250;
+            changed = 0;
+        }
 
-
-}
-
-
+        while(!ws2812IsReady());
+        delay(200000);
+        ws2812Sync();
+    }
 
 }
