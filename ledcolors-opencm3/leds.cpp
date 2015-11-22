@@ -33,22 +33,28 @@ int main(void){
 clock_setup();
 gpio_setup();
 gpio_set(GPIOE, GPIO5);
-   ws2812Init();
+   ws2812Init(0);
 
-   line[0].r = 128;
-   line[0].g = 0;
-   line[0].b = 0;
-   line[15].r = 0;
-   line[15].g = 128;
-   line[15].b = 0;
-   line[29].r = 0;
-   line[29].g = 0;
-   line[29].b = 128;
+   
+
+for(int i = 0; i < 30; ++i)
+{
+
+    ws2812SetPixelHSL(i,i*8,240,i);
+}
 
    ws2812Sync();
+             delay(5000);
 
 
 while (1) {
+            while(!ws2812IsReady());
+             ws2812RotateRight();
+             
+            delay(200000);
+             ws2812Sync();
+
+
             /* Manually: */
             // GPIOC_BSRR = GPIO12;     /* LED off */
             // for (i = 0; i < 800000; i++) /* Wait a bit. */
@@ -64,7 +70,7 @@ while (1) {
             // gpio_clear(GPIOC, GPIO12);   /* LED o
 
 //             gpio_toggle(GPIOE, GPIO5);
-             delay(5000000);
+            // delay(5000000);
 
 
 }

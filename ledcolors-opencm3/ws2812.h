@@ -10,23 +10,26 @@
 
 struct  Color {
     
-    Color( uint8_t _r, uint8_t _g, uint8_t _b):r(_r),g(_g),b(_b){}
 
-    Color():r(0),g(0),b(0){}
-
-    uint8_t r;
-    uint8_t g;
+    uint8_t a;
     uint8_t b;
+    uint8_t c;
 } __attribute__((packed));
 
 
 extern Color line[LED_COUNT];
 
 
-void ws2812Init(void);
+void ws2812Init(uint8_t hslrgb = 0);
 void ws2812Sync(void);
 uint8_t ws2812IsReady(void);
-void ws2812Clear(void);
+void ws2812Clear(uint8_t hslrgb = 0);
+
+void ws2812SetPixelHSL(int index, uint8_t h, uint8_t s, uint8_t l);
+void ws2812SetPixelRGB(int index, uint8_t r, uint8_t g, uint8_t b);
+void ws2812RotateLeft(void);
+void ws2812RotateRight(void);
+
 
 
 #endif //_WS2812_H_
