@@ -47,7 +47,7 @@ void init_tim2(){
     rcc_periph_clock_enable(RCC_TIM2); 
     timer_reset(TIM2);
     timer_set_period(TIM2, 0xFFFF);
-    timer_slave_set_mode(TIM2,TIM_SMCR_SMS_EM2);
+    timer_slave_set_mode(TIM2,TIM_SMCR_SMS_EM1);
     timer_ic_set_input(TIM2, TIM_IC1, TIM_IC_IN_TI1);
     timer_ic_set_input(TIM2, TIM_IC2, TIM_IC_IN_TI2);
     timer_set_oc_polarity_high(TIM2, TIM_OC1);
