@@ -33,6 +33,7 @@
 // js buttons A8,A9
 // left B4,B5,B6,B7
 // right B12,B13,B14,B15
+// start, select A7,A10
 
 /* Define this to include the DFU APP interface. */
 //#define INCLUDE_DFU_INTERFACE
