@@ -176,7 +176,14 @@ void gpio_setup(){
     gpio_set_mode(GPIOA, GPIO_MODE_INPUT, GPIO_CNF_INPUT_PULL_UPDOWN, GPIO8 | GPIO9 | GPIO10 | GPIO7);
     //i want pullup to A8, A9, A10, A07
     gpio_set(GPIOA,GPIO8 | GPIO9 | GPIO10 | GPIO7);
+    
+    //external pullup version
     gpio_set_mode(GPIOB, GPIO_MODE_INPUT, GPIO_CNF_INPUT_FLOAT, GPIO4 | GPIO5 | GPIO6 | GPIO7 | GPIO12 | GPIO13 | GPIO14 | GPIO15);
+    
+    //internal pullup version
+    //gpio_set_mode(GPIOB, GPIO_MODE_INPUT, GPIO_CNF_INPUT_PULL_UPDOWN, GPIO4 | GPIO5 | GPIO6 | GPIO7 | GPIO12 | GPIO13 | GPIO14 | GPIO15);
+    //gpio_set(GPIOB,GPIO4 | GPIO5 | GPIO6 | GPIO7 | GPIO12 | GPIO13 | GPIO14 | GPIO15);
+    
 }
 
 
