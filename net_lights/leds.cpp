@@ -20,7 +20,7 @@
 #define MODE_MAX 4
 #define SPEED_MAX 8
 
-uint8_t mode = 1;
+uint8_t mode = 2;
 uint8_t maxL = 30;
 uint8_t speed = 0;
 const uint16_t setSpeed[SPEED_MAX+1] = {10,15,30,50,100,200,500,1000,2000};
@@ -178,7 +178,9 @@ int main(void){
         }
         if (changed >= 2*LED_COUNT){
             if(mode == 2){
-               colorIndex = rand() % COLOR_COUNT;
+               ++colorIndex;
+               if (colorIndex >= COLOR_COUNT)
+                   colorIndex = 0;
             }
             changed = 0;
         }
@@ -273,9 +275,13 @@ void handleEthernet(void){
                 case 0x00: // reset to defaults
                     resetColors();
                     colorIndex = 8;
-                    mode = 1;
+                    mode = 2;
                     maxL = 30;
                     speed = 0;
+                    //reset L
+                    for(int i = 0; i < LED_COUNT; ++i)
+                        line[i].c = rand() % maxL;
+                    
                     break;
 
                 case 0x01: // set mode

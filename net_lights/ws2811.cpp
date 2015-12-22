@@ -12,8 +12,8 @@
 // https://bitbucket.org/philpem/stm32f4_ws2811/src/56708433bccf095445e334375dfd23828c45670d/src/main.c?at=default&fileviewer=file-view-default
 
 
-#define HPWM 80
-#define LPWM 30
+#define HPWM 85
+#define LPWM 34
 #define BIT_BUFFER_SIZE ((LED_COUNT * 8 * 3) + 3)
 
 Color line[LED_COUNT];

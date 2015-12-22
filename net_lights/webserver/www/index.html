@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Vianočný stromček </title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <!-- Bootstrap -->
+        <link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
+        <style>
+            .colorsquare {
+                width: 50px;
+                height: 50px;
+                display: block;
+                background-color:gray;
+                float:left;
+                margin:10px;
+                border:1px;
+                border-style: solid;
+                border-color:black;
+            }
+        
+        </style>
+    </head>
+    <body>
+        
+        <script src="js/jquery.min.js"></script>
+        <script src="js/bootstrap.min.js"></script>
+        <div class="container">
+
+            <!-- Nav tabs -->
+            <ul class="nav nav-tabs  " role="tablist">
+                <li role="presentation" class="active"><a href="#mode" aria-controls="mode" role="tab" data-toggle="tab">Režim</a></li>
+                <li role="presentation"><a href="#color" aria-controls="color" role="tab" data-toggle="tab">Farba</a></li>
+                <li role="presentation"><a href="#speed" aria-controls="speed" role="tab" data-toggle="tab">Rýchlosť</a></li>
+                <li role="presentation"><a href="#light" aria-controls="light" role="tab" data-toggle="tab">Jas</a></li>
+            </ul>
+
+            <!-- Tab panes -->
+            <div class="tab-content">
+                <div role="tabpanel" class="tab-pane fade in active" id="mode">
+                    <div class="col-md-4" style="padding-top:20px;">
+                    <div class="list-group">
+                        <a id='mode4' href="#" class="list-group-item list-group-item-danger">Vypnúť</a>
+                        <a id='mode1' href="#" class="list-group-item list-group-item-success">Bliká farba</a>
+                        <a id='mode2' href="#" class="list-group-item list-group-item-success">Blikajú farby</a>
+                        <a id='mode3' href="#" class="list-group-item list-group-item-success">Svieti</a>
+                        <a id='reset' href="#" class="list-group-item list-group-item-info">Reset</a>
+                    </div>
+                    </div>
+                
+                
+                </div>
+                <div role="tabpanel" class="tab-pane fade" id="color">
+                    <div style="padding-top:20px;"> 
+                        <div class="row">
+
+                            <div id=hue000 class="colorsquare" style="background-color:#ff0000;"></div>
+                            <div id=hue016 class="colorsquare" style="background-color:#ff6000;"></div>
+                            <div id=hue032 class="colorsquare" style="background-color:#ffc000;"></div>
+                            <div id=hue048 class="colorsquare" style="background-color:#e1ff00;"></div>
+                        </div>
+                        <div class="row">
+
+                            <div id=hue064 class="colorsquare" style="background-color:#81ff00;"></div>
+                            <div id=hue080 class="colorsquare" style="background-color:#21ff00;"></div>
+                            <div id=hue096 class="colorsquare" style="background-color:#00ff3c;"></div>
+                            <div id=hue112 class="colorsquare" style="background-color:#00ff9c;"></div>
+                        </div>
+                        <div class="row">
+
+                            <div id=hue128 class="colorsquare" style="background-color:#00fffc;"></div>
+                            <div id=hue144 class="colorsquare" style="background-color:#00a5ff;"></div>
+                            <div id=hue160 class="colorsquare" style="background-color:#0045ff;"></div>
+                            <div id=hue176 class="colorsquare" style="background-color:#1800ff;"></div>
+                        </div>
+                        <div class="row">
+
+                            <div id=hue192 class="colorsquare" style="background-color:#7800ff;"></div>
+                            <div id=hue208 class="colorsquare" style="background-color:#d800ff;"></div>
+                            <div id=hue224 class="colorsquare" style="background-color:#ff00c9;"></div>
+                            <div id=hue240 class="colorsquare" style="background-color:#ff0069;"></div>
+                        </div>
+                        <div class="row">
+                            <div id=huewhite class="colorsquare" style="background-color:#ffffff;"></div>
+
+                        </div>
+                    </div>
+
+                </div>
+                <div role="tabpanel" class="tab-pane fade" id="speed">
+                    <div class="col-md-4" style="padding-top:20px;">
+                    <div class="list-group">
+                        <a id='speed0' href="#" class="list-group-item list-group-item-success ">Pomaly</a>
+                        <a id='speed1' href="#" class="list-group-item ">Rýchlosť 1</a>
+                        <a id='speed2' href="#" class="list-group-item ">Rýchlosť 2</a>
+                        <a id='speed3' href="#" class="list-group-item ">Rýchlosť 3</a>
+                        <a id='speed4' href="#" class="list-group-item ">Rýchlosť 4</a>
+                        <a id='speed5' href="#" class="list-group-item ">Rýchlosť 5</a>
+                        <a id='speed6' href="#" class="list-group-item list-group-item-danger">Rýchlo </a>
+                    </div>
+                    </div>
+                
+                </div>
+                <div role="tabpanel" class="tab-pane fade" id="light">
+                    <div class="col-md-4" style="padding-top:20px;">
+                    <div class="list-group">
+                        <a id='light0' href="#" class="list-group-item list-group-item-success ">Nízky</a>
+                        <a id='light1' href="#" class="list-group-item ">Jas 1</a>
+                        <a id='light2' href="#" class="list-group-item ">Jas 2</a>
+                        <a id='light3' href="#" class="list-group-item ">Jas 3</a>
+                        <a id='light4' href="#" class="list-group-item ">Jas 4</a>
+                        <a id='light5' href="#" class="list-group-item ">Jas 5</a>
+                        <a id='light6' href="#" class="list-group-item list-group-item-danger">Vysoký</a>
+                    </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <script type='text/javascript'>
+             function setMode(e){
+
+                $.get('/cmd?mode=' + e.data.param1);
+             }
+             function setReset(e){
+
+                $.get('/cmd?reset=1');
+             }
+
+             function setSpeed(e){
+
+                $.get('/cmd?speed=' + e.data.param1);
+             }
+             function setLight(e){
+
+                $.get('/cmd?light=' + e.data.param1);
+             }
+             function setColor(e){
+
+                $.get('/cmd?hue=' + e.data.param1 + "&saturation=" +  e.data.param2);
+             }
+
+             $("#mode4").click({param1:'4'},setMode);
+             $("#mode1").click({param1:'1'},setMode);
+             $("#mode2").click({param1:'2'},setMode);
+             $("#mode3").click({param1:'3'},setMode);
+             $("#reset").click(setReset);
+             
+             $("#speed0").click({param1:'0'},setSpeed);
+             $("#speed1").click({param1:'1'},setSpeed);
+             $("#speed2").click({param1:'2'},setSpeed);
+             $("#speed3").click({param1:'3'},setSpeed);
+             $("#speed4").click({param1:'4'},setSpeed);
+             $("#speed5").click({param1:'5'},setSpeed);
+             $("#speed6").click({param1:'6'},setSpeed);
+
+             $("#light0").click({param1:'10'},setLight);
+             $("#light1").click({param1:'30'},setLight);
+             $("#light2").click({param1:'50'},setLight);
+             $("#light3").click({param1:'80'},setLight);
+             $("#light4").click({param1:'100'},setLight);
+             $("#light5").click({param1:'150'},setLight);
+             $("#light6").click({param1:'200'},setLight);
+           
+             $("#hue000").click({param1:"0", param2: "255"},setColor);
+             $("#hue016").click({param1:"16", param2: "255"},setColor);
+             $("#hue032").click({param1:"32", param2: "255"},setColor);
+             $("#hue048").click({param1:"48", param2: "255"},setColor);
+             $("#hue064").click({param1:"64", param2: "255"},setColor);
+             $("#hue080").click({param1:"80", param2: "255"},setColor);
+             $("#hue096").click({param1:"96", param2: "255"},setColor);
+             $("#hue112").click({param1:"112", param2: "255"},setColor);
+             $("#hue128").click({param1:"128", param2: "255"},setColor);
+             $("#hue144").click({param1:"144", param2: "255"},setColor);
+             $("#hue160").click({param1:"160", param2: "255"},setColor);
+             $("#hue176").click({param1:"176", param2: "255"},setColor);
+             $("#hue192").click({param1:"192", param2: "255"},setColor);
+             $("#hue208").click({param1:"208", param2: "255"},setColor);
+             $("#hue224").click({param1:"224", param2: "255"},setColor);
+             $("#hue240").click({param1:"240", param2: "255"},setColor);
+             $("#huewhite").click({param1:"0", param2: "0"},setColor);
+
+
+
+        </script>
+    
+    </body>
+</html>
