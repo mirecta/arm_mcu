@@ -50,7 +50,23 @@ BH1750::BH1750(uint32_t i2c,  uint8_t address, uint8_t continuous, uint8_t resol
 
 
 void BH1750::init()
-{}
+{
+
+    iic_write(BH_POWER_UP);
+    iic_write(mode);
+    iic_write(BH_RESET);
+}
+
+
+int BH1750::getLux(){
+    if((mode >> 1) == 1){
+      return iic_read16();
+    }else{
+         iic_write(mode);
+         return iic_read16();
+    }
+}
+
 
 void BH1750::iic_write(uint8_t data){
 
@@ -81,7 +97,7 @@ void BH1750::iic_write(uint8_t data){
 
 }
 
-uint16_t BH1750::iic_read(){
+uint16_t BH1750::iic_read16(){
 
 
     //special case read two bytes
