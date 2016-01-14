@@ -49,21 +49,27 @@ BH1750::BH1750(uint32_t i2c,  uint8_t address, uint8_t continuous, uint8_t resol
 
 
 
-void BH1750::init()
-{
+void BH1750::init(){
 
     iic_write(BH_POWER_UP);
     iic_write(mode);
     iic_write(BH_RESET);
 }
 
+void BH1750::setMeasureTime(uint8_t time){
+
+    iic_write(BH_MT_HI | (time >> 5));
+    iic_write(BH_MT_LO | (time & 0x1f));  
+}
+
 
 int BH1750::getLux(){
+
     if((mode >> 1) == 1){
-      return iic_read16();
+        return iic_read16();
     }else{
-         iic_write(mode);
-         return iic_read16();
+        iic_write(mode);
+        return iic_read16();
     }
 }
 
