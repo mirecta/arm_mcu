@@ -151,7 +151,7 @@ void LcdI2c::send4(const uint8_t data, const uint8_t type){
         pins |= data;
         pins |= en;
         i2c_write_port(pins);
-    //    delay(500);
+        delay(500);
         pins &= ~en;
         i2c_write_port(pins);
 
@@ -159,7 +159,9 @@ void LcdI2c::send4(const uint8_t data, const uint8_t type){
 void LcdI2c::cmd8(const uint8_t cmd){
 
     send4(cmd >> 4,LCD_CMD);
+    delay(1000);
     send4(cmd & 0x0f,LCD_CMD);
+    delay(1000);
 
 }
 
