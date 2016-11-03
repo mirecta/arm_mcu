@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Vianočný stromček </title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+
+		html { font-family: sans-serif; }
+		body { margin: 0px; width:400px; }
+		article, aside, details, figcaption, figure, footer, header, hgroup, main, menu, nav, section, summary { display: block; }
+		audio, canvas, progress, video { display: inline-block; vertical-align: baseline; }
+		audio:not([controls]) { display: none; height: 0px; }
+		[hidden], template { display: none; }
+		a { background-color: transparent; }
+		a:active, a:hover { outline: 0px; }
+		abbr[title] { border-bottom: 1px dotted; }
+		b, strong { font-weight: 700; }
+		dfn { font-style: italic; }
+		h1 { margin: 0.67em 0px; font-size: 2em; }
+		mark { color: rgb(0, 0, 0); background: rgb(255, 255, 0); }
+		small { font-size: 80%; }
+		sub, sup { position: relative; font-size: 75%; line-height: 0; vertical-align: baseline; }
+		sup { top: -0.5em; }
+		sub { bottom: -0.25em; }
+		img { border: 0px; }
+		svg:not(:root) { overflow: hidden; }
+		figure { margin: 1em 40px; }
+		hr { height: 0px; box-sizing: content-box; }
+		pre { overflow: auto; }
+		code, kbd, pre, samp { font-family: monospace, monospace; font-size: 1em; }
+		button, input, optgroup, select, textarea { margin: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: inherit; font-family: inherit; color: inherit; }
+		button { overflow: visible; }
+		button, select { text-transform: none; }
+		button, html input[type="button"], input[type="reset"], input[type="submit"] { -webkit-appearance: button; cursor: pointer; }
+		button[disabled], html input[disabled] { cursor: default; }
+		input { line-height: normal; }
+		input[type="checkbox"], input[type="radio"] { box-sizing: border-box; padding: 0px; }
+		input[type="number"]::-webkit-inner-spin-button, input[type="number"]::-webkit-outer-spin-button { height: auto; }
+		input[type="search"] { box-sizing: content-box; -webkit-appearance: textfield; }
+		input[type="search"]::-webkit-search-cancel-button, input[type="search"]::-webkit-search-decoration { -webkit-appearance: none; }
+		fieldset { padding: 0.35em 0.625em 0.75em; margin: 0px 2px; border: 1px solid silver; }
+		legend { padding: 0px; border: 0px; }
+		textarea { overflow: auto; }
+		optgroup { font-weight: 700; }
+		table { border-spacing: 0px; border-collapse: collapse; }
+		td, th { padding: 0px; }
+		* { box-sizing: border-box; }
+		::after, ::before { box-sizing: border-box; }
+		html { font-size: 10px; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); }
+		body { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; font-size: 14px; line-height: 1.42857; color: rgb(51, 51, 51); background-color: rgb(255, 255, 255); }
+		button, input, select, textarea { font-family: inherit; font-size: inherit; line-height: inherit; }
+		a { color: rgb(51, 122, 183); text-decoration: none; }
+		a:focus, a:hover { color: rgb(35, 82, 124); text-decoration: underline; }
+		a:focus { outline: -webkit-focus-ring-color auto 5px; outline-offset: -2px; }
+		figure { margin: 0px; }
+		img { vertical-align: middle; }
+		hr { margin-top: 20px; margin-bottom: 20px; border-width: 1px 0px 0px; border-top-style: solid; border-top-color: rgb(238, 238, 238); }
+		[role="button"] { cursor: pointer; }
+		p { margin: 0px 0px 10px; }
+		ol, ul { margin-top: 0px; margin-bottom: 10px; }
+		ol ol, ol ul, ul ol, ul ul { margin-bottom: 0px; }
+		dl { margin-top: 0px; margin-bottom: 20px; }
+		dd, dt { line-height: 1.42857; }
+		dt { font-weight: 700; }
+		dd { margin-left: 0px; }
+		abbr[data-original-title], abbr[title] { cursor: help; border-bottom: 1px dotted rgb(119, 119, 119); }
+		blockquote { padding: 10px 20px; margin: 0px 0px 20px; font-size: 17.5px; border-left: 5px solid rgb(238, 238, 238); }
+		blockquote ol:last-child, blockquote p:last-child, blockquote ul:last-child { margin-bottom: 0px; }
+		address { margin-bottom: 20px; font-style: normal; line-height: 1.42857; }
+		code, kbd, pre, samp { font-family: Menlo, Monaco, Consolas, "Courier New", monospace; }
+		code { padding: 2px 4px; font-size: 90%; color: rgb(199, 37, 78); border-radius: 4px; background-color: rgb(249, 242, 244); }
+		kbd { padding: 2px 4px; font-size: 90%; color: rgb(255, 255, 255); border-radius: 3px; box-shadow: rgba(0, 0, 0, 0.247059) 0px -1px 0px inset; background-color: rgb(51, 51, 51); }
+		kbd kbd { padding: 0px; font-size: 100%; font-weight: 700; box-shadow: none; }
+		pre { display: block; padding: 9.5px; margin: 0px 0px 10px; font-size: 13px; line-height: 1.42857; color: rgb(51, 51, 51); word-break: break-all; word-wrap: break-word; border: 1px solid rgb(204, 204, 204); border-radius: 4px; background-color: rgb(245, 245, 245); }
+		pre code { padding: 0px; font-size: inherit; color: inherit; white-space: pre-wrap; border-radius: 0px; background-color: transparent; }
+		.container { padding-right: 15px; padding-left: 15px; margin-right: auto; margin-left: auto; }
+		.row { margin-right: -15px; margin-left: -15px; }
+		.col-lg-1, .col-lg-10, .col-lg-11, .col-lg-12, .col-lg-2, .col-lg-3, .col-lg-4, .col-lg-5, .col-lg-6, .col-lg-7, .col-lg-8, .col-lg-9, .col-md-1, .col-md-10, .col-md-11, .col-md-12, .col-md-2, .col-md-3, .col-md-4, .col-md-5, .col-md-6, .col-md-7, .col-md-8, .col-md-9, .col-sm-1, .col-sm-10, .col-sm-11, .col-sm-12, .col-sm-2, .col-sm-3, .col-sm-4, .col-sm-5, .col-sm-6, .col-sm-7, .col-sm-8, .col-sm-9, .col-xs-1, .col-xs-10, .col-xs-11, .col-xs-12, .col-xs-2, .col-xs-3, .col-xs-4, .col-xs-5, .col-xs-6, .col-xs-7, .col-xs-8, .col-xs-9 { position: relative; min-height: 1px; padding-right: 15px; padding-left: 15px; }
+		table { background-color: transparent; }
+		caption { padding-top: 8px; padding-bottom: 8px; color: rgb(119, 119, 119); text-align: left; }
+		th { text-align: left; }
+		table col[class*="col-"] { position: static; display: table-column; float: none; }
+		table td[class*="col-"], table th[class*="col-"] { position: static; display: table-cell; float: none; }
+		.table > tbody > tr.active > td, .table > tbody > tr.active > th, .table > tbody > tr > td.active, .table > tbody > tr > th.active, .table > tfoot > tr.active > td, .table > tfoot > tr.active > th, .table > tfoot > tr > td.active, .table > tfoot > tr > th.active, .table > thead > tr.active > td, .table > thead > tr.active > th, .table > thead > tr > td.active, .table > thead > tr > th.active { background-color: rgb(245, 245, 245); }
+		.table-hover > tbody > tr.active:hover > td, .table-hover > tbody > tr.active:hover > th, .table-hover > tbody > tr:hover > .active, .table-hover > tbody > tr > td.active:hover, .table-hover > tbody > tr > th.active:hover { background-color: rgb(232, 232, 232); }
+		fieldset { min-width: 0px; padding: 0px; margin: 0px; border: 0px; }
+		legend { display: block; width: 100%; padding: 0px; margin-bottom: 20px; font-size: 21px; line-height: inherit; color: rgb(51, 51, 51); border-width: 0px 0px 1px; border-bottom-style: solid; border-bottom-color: rgb(229, 229, 229); }
+		label { display: inline-block; max-width: 100%; margin-bottom: 5px; font-weight: 700; }
+		input[type="search"] { box-sizing: border-box; }
+		input[type="checkbox"], input[type="radio"] { margin: 4px 0px 0px; line-height: normal; }
+		input[type="file"] { display: block; }
+		input[type="range"] { display: block; width: 100%; }
+		select[multiple], select[size] { height: auto; }
+		input[type="file"]:focus, input[type="checkbox"]:focus, input[type="radio"]:focus { outline: -webkit-focus-ring-color auto 5px; outline-offset: -2px; }
+		output { display: block; padding-top: 7px; font-size: 14px; line-height: 1.42857; color: rgb(85, 85, 85); }
+		input[type="search"] { -webkit-appearance: none; }
+		.btn.active.focus, .btn.active:focus, .btn.focus, .btn:active.focus, .btn:active:focus, .btn:focus { outline: -webkit-focus-ring-color auto 5px; outline-offset: -2px; }
+		.btn.active, .btn:active { outline: 0px; box-shadow: rgba(0, 0, 0, 0.121569) 0px 3px 5px inset; background-image: none; }
+		.btn-default.active, .btn-default:active, .open > .dropdown-toggle.btn-default { color: rgb(51, 51, 51); border-color: rgb(173, 173, 173); background-color: rgb(230, 230, 230); }
+		.btn-default.active.focus, .btn-default.active:focus, .btn-default.active:hover, .btn-default:active.focus, .btn-default:active:focus, .btn-default:active:hover, .open > .dropdown-toggle.btn-default.focus, .open > .dropdown-toggle.btn-default:focus, .open > .dropdown-toggle.btn-default:hover { color: rgb(51, 51, 51); border-color: rgb(140, 140, 140); background-color: rgb(212, 212, 212); }
+		.btn-default.active, .btn-default:active, .open > .dropdown-toggle.btn-default { background-image: none; }
+		.btn-primary.active, .btn-primary:active, .open > .dropdown-toggle.btn-primary { color: rgb(255, 255, 255); border-color: rgb(32, 77, 116); background-color: rgb(40, 96, 144); }
+		.btn-primary.active.focus, .btn-primary.active:focus, .btn-primary.active:hover, .btn-primary:active.focus, .btn-primary:active:focus, .btn-primary:active:hover, .open > .dropdown-toggle.btn-primary.focus, .open > .dropdown-toggle.btn-primary:focus, .open > .dropdown-toggle.btn-primary:hover { color: rgb(255, 255, 255); border-color: rgb(18, 43, 64); background-color: rgb(32, 77, 116); }
+		.btn-primary.active, .btn-primary:active, .open > .dropdown-toggle.btn-primary { background-image: none; }
+		.btn-success.active, .btn-success:active, .open > .dropdown-toggle.btn-success { color: rgb(255, 255, 255); border-color: rgb(57, 132, 57); background-color: rgb(68, 157, 68); }
+		.btn-success.active.focus, .btn-success.active:focus, .btn-success.active:hover, .btn-success:active.focus, .btn-success:active:focus, .btn-success:active:hover, .open > .dropdown-toggle.btn-success.focus, .open > .dropdown-toggle.btn-success:focus, .open > .dropdown-toggle.btn-success:hover { color: rgb(255, 255, 255); border-color: rgb(37, 86, 37); background-color: rgb(57, 132, 57); }
+		.btn-success.active, .btn-success:active, .open > .dropdown-toggle.btn-success { background-image: none; }
+		.btn-info.active, .btn-info:active, .open > .dropdown-toggle.btn-info { color: rgb(255, 255, 255); border-color: rgb(38, 154, 188); background-color: rgb(49, 176, 213); }
+		.btn-info.active.focus, .btn-info.active:focus, .btn-info.active:hover, .btn-info:active.focus, .btn-info:active:focus, .btn-info:active:hover, .open > .dropdown-toggle.btn-info.focus, .open > .dropdown-toggle.btn-info:focus, .open > .dropdown-toggle.btn-info:hover { color: rgb(255, 255, 255); border-color: rgb(27, 109, 133); background-color: rgb(38, 154, 188); }
+		.btn-info.active, .btn-info:active, .open > .dropdown-toggle.btn-info { background-image: none; }
+		.btn-warning.active, .btn-warning:active, .open > .dropdown-toggle.btn-warning { color: rgb(255, 255, 255); border-color: rgb(213, 133, 18); background-color: rgb(236, 151, 31); }
+		.btn-warning.active.focus, .btn-warning.active:focus, .btn-warning.active:hover, .btn-warning:active.focus, .btn-warning:active:focus, .btn-warning:active:hover, .open > .dropdown-toggle.btn-warning.focus, .open > .dropdown-toggle.btn-warning:focus, .open > .dropdown-toggle.btn-warning:hover { color: rgb(255, 255, 255); border-color: rgb(152, 95, 13); background-color: rgb(213, 133, 18); }
+		.btn-warning.active, .btn-warning:active, .open > .dropdown-toggle.btn-warning { background-image: none; }
+		.btn-danger.active, .btn-danger:active, .open > .dropdown-toggle.btn-danger { color: rgb(255, 255, 255); border-color: rgb(172, 41, 37); background-color: rgb(201, 48, 44); }
+		.btn-danger.active.focus, .btn-danger.active:focus, .btn-danger.active:hover, .btn-danger:active.focus, .btn-danger:active:focus, .btn-danger:active:hover, .open > .dropdown-toggle.btn-danger.focus, .open > .dropdown-toggle.btn-danger:focus, .open > .dropdown-toggle.btn-danger:hover { color: rgb(255, 255, 255); border-color: rgb(118, 28, 25); background-color: rgb(172, 41, 37); }
+		.btn-danger.active, .btn-danger:active, .open > .dropdown-toggle.btn-danger { background-image: none; }
+		.btn-link, .btn-link.active, .btn-link:active, .btn-link[disabled], fieldset[disabled] .btn-link { box-shadow: none; background-color: transparent; }
+		.fade { opacity: 0; transition: opacity 0.15s linear; }
+		.fade.in { opacity: 1; }
+		.collapse.in { display: block; }
+		tr.collapse.in { display: table-row; }
+		tbody.collapse.in { display: table-row-group; }
+		.dropdown-menu > .active > a, .dropdown-menu > .active > a:focus, .dropdown-menu > .active > a:hover { color: rgb(255, 255, 255); text-decoration: none; outline: 0px; background-color: rgb(51, 122, 183); }
+		.btn-group-vertical > .btn.active, .btn-group-vertical > .btn:active, .btn-group-vertical > .btn:focus, .btn-group-vertical > .btn:hover, .btn-group > .btn.active, .btn-group > .btn:active, .btn-group > .btn:focus, .btn-group > .btn:hover { z-index: 2; }
+		.nav { padding-left: 0px; margin-bottom: 0px; list-style: none; }
+		.nav > li { position: relative; display: block; }
+		.nav > li > a { position: relative; display: block; padding: 10px 15px; }
+		.nav > li > a:focus, .nav > li > a:hover { text-decoration: none; background-color: rgb(238, 238, 238); }
+		.nav > li.disabled > a { color: rgb(119, 119, 119); }
+		.nav > li.disabled > a:focus, .nav > li.disabled > a:hover { color: rgb(119, 119, 119); text-decoration: none; cursor: not-allowed; background-color: transparent; }
+		.nav .open > a, .nav .open > a:focus, .nav .open > a:hover { border-color: rgb(51, 122, 183); background-color: rgb(238, 238, 238); }
+		.nav .nav-divider { height: 1px; margin: 9px 0px; overflow: hidden; background-color: rgb(229, 229, 229); }
+		.nav > li > a > img { max-width: none; }
+		.nav-tabs { border-bottom: 1px solid rgb(221, 221, 221); }
+		.nav-tabs > li { float: left; margin-bottom: -1px; }
+		.nav-tabs > li > a { margin-right: 2px; line-height: 1.42857; border: 1px solid transparent; border-radius: 4px 4px 0px 0px; }
+		.nav-tabs > li > a:hover { border-color: rgb(238, 238, 238) rgb(238, 238, 238) rgb(221, 221, 221); }
+		.nav-tabs > li.active > a, .nav-tabs > li.active > a:focus, .nav-tabs > li.active > a:hover { color: rgb(85, 85, 85); cursor: default; border-width: 1px; border-style: solid; border-color: rgb(221, 221, 221) rgb(221, 221, 221) transparent; background-color: rgb(255, 255, 255); }
+		.nav-tabs.nav-justified > .active > a, .nav-tabs.nav-justified > .active > a:focus, .nav-tabs.nav-justified > .active > a:hover { border: 1px solid rgb(221, 221, 221); }
+		.nav-pills > li.active > a, .nav-pills > li.active > a:focus, .nav-pills > li.active > a:hover { color: rgb(255, 255, 255); background-color: rgb(51, 122, 183); }
+		.nav-tabs-justified > .active > a, .nav-tabs-justified > .active > a:focus, .nav-tabs-justified > .active > a:hover { border: 1px solid rgb(221, 221, 221); }
+		.tab-content > .tab-pane { display: none; }
+		.tab-content > .active { display: block; }
+		.nav-tabs .dropdown-menu { margin-top: -1px; border-top-left-radius: 0px; border-top-right-radius: 0px; }
+		.navbar-collapse.in { overflow-y: auto; }
+		.container-fluid > .navbar-collapse, .container-fluid > .navbar-header, .container > .navbar-collapse, .container > .navbar-header { margin-right: -15px; margin-left: -15px; }
+		.navbar-default .navbar-nav > .active > a, .navbar-default .navbar-nav > .active > a:focus, .navbar-default .navbar-nav > .active > a:hover { color: rgb(85, 85, 85); background-color: rgb(231, 231, 231); }
+		.navbar-inverse .navbar-nav > .active > a, .navbar-inverse .navbar-nav > .active > a:focus, .navbar-inverse .navbar-nav > .active > a:hover { color: rgb(255, 255, 255); background-color: rgb(8, 8, 8); }
+		.breadcrumb > .active { color: rgb(119, 119, 119); }
+		.pagination > .active > a, .pagination > .active > a:focus, .pagination > .active > a:hover, .pagination > .active > span, .pagination > .active > span:focus, .pagination > .active > span:hover { z-index: 3; color: rgb(255, 255, 255); cursor: default; border-color: rgb(51, 122, 183); background-color: rgb(51, 122, 183); }
+		.list-group-item.active > .badge, .nav-pills > .active > a > .badge { color: rgb(51, 122, 183); background-color: rgb(255, 255, 255); }
+		.list-group-item > .badge { float: right; }
+		.list-group-item > .badge + .badge { margin-right: 5px; }
+		.container .jumbotron, .container-fluid .jumbotron { padding-right: 15px; padding-left: 15px; border-radius: 6px; }
+		.jumbotron .container { max-width: 100%; }
+		a.thumbnail.active, a.thumbnail:focus, a.thumbnail:hover { border-color: rgb(51, 122, 183); }
+		.progress-bar.active, .progress.active .progress-bar { animation: progress-bar-stripes 2s linear infinite; }
+		.list-group { padding-left: 0px; margin-bottom: 20px; }
+		.list-group-item { position: relative; display: block; padding: 10px 15px; margin-bottom: -1px; border: 1px solid rgb(221, 221, 221); background-color: rgb(255, 255, 255); }
+		.list-group-item:first-child { border-top-left-radius: 4px; border-top-right-radius: 4px; }
+		.list-group-item:last-child { margin-bottom: 0px; border-bottom-right-radius: 4px; border-bottom-left-radius: 4px; }
+		a.list-group-item, button.list-group-item { color: rgb(85, 85, 85); }
+		a.list-group-item .list-group-item-heading, button.list-group-item .list-group-item-heading { color: rgb(51, 51, 51); }
+		a.list-group-item:focus, a.list-group-item:hover, button.list-group-item:focus, button.list-group-item:hover { color: rgb(85, 85, 85); text-decoration: none; background-color: rgb(245, 245, 245); }
+		button.list-group-item { width: 100%; text-align: left; }
+		.list-group-item.active, .list-group-item.active:focus, .list-group-item.active:hover { z-index: 2; color: rgb(255, 255, 255); border-color: rgb(51, 122, 183); background-color: rgb(51, 122, 183); }
+		.list-group-item.active .list-group-item-heading, .list-group-item.active .list-group-item-heading > .small, .list-group-item.active .list-group-item-heading > small, .list-group-item.active:focus .list-group-item-heading, .list-group-item.active:focus .list-group-item-heading > .small, .list-group-item.active:focus .list-group-item-heading > small, .list-group-item.active:hover .list-group-item-heading, .list-group-item.active:hover .list-group-item-heading > .small, .list-group-item.active:hover .list-group-item-heading > small { color: inherit; }
+		.list-group-item.active .list-group-item-text, .list-group-item.active:focus .list-group-item-text, .list-group-item.active:hover .list-group-item-text { color: rgb(199, 221, 239); }
+		.list-group-item-success { color: rgb(60, 118, 61); background-color: rgb(223, 240, 216); }
+		a.list-group-item-success, button.list-group-item-success { color: rgb(60, 118, 61); }
+		a.list-group-item-success .list-group-item-heading, button.list-group-item-success .list-group-item-heading { color: inherit; }
+		a.list-group-item-success:focus, a.list-group-item-success:hover, button.list-group-item-success:focus, button.list-group-item-success:hover { color: rgb(60, 118, 61); background-color: rgb(208, 233, 198); }
+		a.list-group-item-success.active, a.list-group-item-success.active:focus, a.list-group-item-success.active:hover, button.list-group-item-success.active, button.list-group-item-success.active:focus, button.list-group-item-success.active:hover { color: rgb(255, 255, 255); border-color: rgb(60, 118, 61); background-color: rgb(60, 118, 61); }
+		.list-group-item-info { color: rgb(49, 112, 143); background-color: rgb(217, 237, 247); }
+		a.list-group-item-info, button.list-group-item-info { color: rgb(49, 112, 143); }
+		a.list-group-item-info .list-group-item-heading, button.list-group-item-info .list-group-item-heading { color: inherit; }
+		a.list-group-item-info:focus, a.list-group-item-info:hover, button.list-group-item-info:focus, button.list-group-item-info:hover { color: rgb(49, 112, 143); background-color: rgb(196, 227, 243); }
+		a.list-group-item-info.active, a.list-group-item-info.active:focus, a.list-group-item-info.active:hover, button.list-group-item-info.active, button.list-group-item-info.active:focus, button.list-group-item-info.active:hover { color: rgb(255, 255, 255); border-color: rgb(49, 112, 143); background-color: rgb(49, 112, 143); }
+		a.list-group-item-warning.active, a.list-group-item-warning.active:focus, a.list-group-item-warning.active:hover, button.list-group-item-warning.active, button.list-group-item-warning.active:focus, button.list-group-item-warning.active:hover { color: rgb(255, 255, 255); border-color: rgb(138, 109, 59); background-color: rgb(138, 109, 59); }
+		.list-group-item-danger { color: rgb(169, 68, 66); background-color: rgb(242, 222, 222); }
+		a.list-group-item-danger, button.list-group-item-danger { color: rgb(169, 68, 66); }
+		a.list-group-item-danger .list-group-item-heading, button.list-group-item-danger .list-group-item-heading { color: inherit; }
+		a.list-group-item-danger:focus, a.list-group-item-danger:hover, button.list-group-item-danger:focus, button.list-group-item-danger:hover { color: rgb(169, 68, 66); background-color: rgb(235, 204, 204); }
+		a.list-group-item-danger.active, a.list-group-item-danger.active:focus, a.list-group-item-danger.active:hover, button.list-group-item-danger.active, button.list-group-item-danger.active:focus, button.list-group-item-danger.active:hover { color: rgb(255, 255, 255); border-color: rgb(169, 68, 66); background-color: rgb(169, 68, 66); }
+		.panel > .list-group, .panel > .panel-collapse > .list-group { margin-bottom: 0px; }
+		.panel > .list-group .list-group-item, .panel > .panel-collapse > .list-group .list-group-item { border-width: 1px 0px; border-radius: 0px; }
+		.panel > .list-group:first-child .list-group-item:first-child, .panel > .panel-collapse > .list-group:first-child .list-group-item:first-child { border-top: 0px; border-top-left-radius: 3px; border-top-right-radius: 3px; }
+		.panel > .list-group:last-child .list-group-item:last-child, .panel > .panel-collapse > .list-group:last-child .list-group-item:last-child { border-bottom: 0px; border-bottom-right-radius: 3px; border-bottom-left-radius: 3px; }
+		.panel > .panel-heading + .panel-collapse > .list-group .list-group-item:first-child { border-top-left-radius: 0px; border-top-right-radius: 0px; }
+		.panel-heading + .list-group .list-group-item:first-child { border-top-width: 0px; }
+	.list-group + .panel-footer { border-top-width: 0px; }
+		.panel-group .panel-heading + .panel-collapse > .list-group, .panel-group .panel-heading + .panel-collapse > .panel-body { border-top: 1px solid rgb(221, 221, 221); }
+		.modal.fade .modal-dialog { transition: transform 0.3s ease-out; transform: translate(0px, -25%); }
+		.modal.in .modal-dialog { transform: translate(0px, 0px); }
+		.modal-backdrop.fade { opacity: 0; }
+		.modal-backdrop.in { opacity: 0.5; }
+		.tooltip.in { opacity: 0.9; }
+		.carousel-inner > .active, .carousel-inner > .next, .carousel-inner > .prev { display: block; }
+		.carousel-inner > .active { left: 0px; }
+		.carousel-indicators .active { width: 12px; height: 12px; margin: 0px; background-color: rgb(255, 255, 255); }
+		.btn-group-vertical > .btn-group::after, .btn-group-vertical > .btn-group::before, .btn-toolbar::after, .btn-toolbar::before, .clearfix::after, .clearfix::before, .container-fluid::after, .container-fluid::before, .container::after, .container::before, .dl-horizontal dd::after, .dl-horizontal dd::before, .form-horizontal .form-group::after, .form-horizontal .form-group::before, .modal-footer::after, .modal-footer::before, .modal-header::after, .modal-header::before, .nav::after, .nav::before, .navbar-collapse::after, .navbar-collapse::before, .navbar-header::after, .navbar-header::before, .navbar::after, .navbar::before, .pager::after, .pager::before, .panel-body::after, .panel-body::before, .row::after, .row::before { display: table; content: " "; }
+		.btn-group-vertical > .btn-group::after, .btn-toolbar::after, .clearfix::after, .container-fluid::after, .container::after, .dl-horizontal dd::after, .form-horizontal .form-group::after, .modal-footer::after, .modal-header::after, .nav::after, .navbar-collapse::after, .navbar-header::after, .navbar::after, .pager::after, .panel-body::after, .row::after { clear: both; }
+		.colorsquare { width: 50px; height: 50px; display: block; float: left; margin: 10px; border: 1px solid black; background-color: gray; }
+			
+ 
+        </style>
+<script>
+function makeTabs(selector1,selector2) {
+
+    tab_lists_anchors = document.querySelectorAll(selector1 + " li a");
+    divs = document.querySelector(selector2).children;
+    for (var i = 0; i < tab_lists_anchors.length; i++) {
+        if (tab_lists_anchors[i].classList.contains('active')) {
+            divs[i].className = "tab-pane fade in active";
+        }
+    }
+
+    for (i = 0; i < tab_lists_anchors.length; i++) {
+
+        document.querySelectorAll(selector1 + " li a")[i].addEventListener('click', function(e) {
+
+           for (i = 0; i < divs.length; i++) {
+                divs[i].className = "tab-pane fade";
+            }
+           for (i = 0; i < tab_lists_anchors.length; i++) {
+                tab_lists_anchors[i].classList.remove("active");
+            }
+            clicked_tab = e.target || e.srcElement;
+            clicked_tab.classList.add('active');
+            div_to_show = clicked_tab.getAttribute('href');
+            document.querySelector(div_to_show).className = "tab-pane fade in active";
+        });
+    }
+}
+
+window.addEventListener("load", function() {
+    makeTabs(".nav-tabs",".tab-content")
+});
+</script>
+    </head>
+    <body>
+        
+        <div class="container">
+
+            <ul class="nav nav-tabs  " role="tablist">
+                <li role="presentation" class="active"><a href="#mode" aria-controls="mode" role="tab" data-toggle="tab">Režim</a></li>
+                <li role="presentation"><a href="#color" aria-controls="color" role="tab" data-toggle="tab">Farba</a></li>
+                <li role="presentation"><a href="#speed" aria-controls="speed" role="tab" data-toggle="tab">Rýchlosť</a></li>
+                <li role="presentation"><a href="#light" aria-controls="light" role="tab" data-toggle="tab">Jas</a></li>
+            </ul>
+
+            <div class="tab-content">
+                <div role="tabpanel" class="tab-pane fade in active" id="mode">
+                    <div class="col-md-4" style="padding-top:20px;">
+                    <div class="list-group">
+                        <a id='mode4' href="#" class="list-group-item list-group-item-danger">Vypnúť</a>
+                        <a id='mode1' href="#" class="list-group-item list-group-item-success">Bliká farba</a>
+                        <a id='mode2' href="#" class="list-group-item list-group-item-success">Blikajú farby</a>
+                        <a id='mode3' href="#" class="list-group-item list-group-item-success">Svieti</a>
+                        <a id='reset' href="#" class="list-group-item list-group-item-info">Reset</a>
+                    </div>
+                    </div>
+                
+                </div>
+                <div role="tabpanel" class="tab-pane fade" id="color">
+                    <div style="padding-top:20px;"> 
+                        <div class="row">
+
+                            <div id=hue000 class="colorsquare" style="background-color:#ff0000;"></div>
+                            <div id=hue016 class="colorsquare" style="background-color:#ff6000;"></div>
+                            <div id=hue032 class="colorsquare" style="background-color:#ffc000;"></div>
+                            <div id=hue048 class="colorsquare" style="background-color:#e1ff00;"></div>
+                        </div>
+                        <div class="row">
+
+                            <div id=hue064 class="colorsquare" style="background-color:#81ff00;"></div>
+                            <div id=hue080 class="colorsquare" style="background-color:#21ff00;"></div>
+                            <div id=hue096 class="colorsquare" style="background-color:#00ff3c;"></div>
+                            <div id=hue112 class="colorsquare" style="background-color:#00ff9c;"></div>
+                        </div>
+                        <div class="row">
+
+                            <div id=hue128 class="colorsquare" style="background-color:#00fffc;"></div>
+                            <div id=hue144 class="colorsquare" style="background-color:#00a5ff;"></div>
+                            <div id=hue160 class="colorsquare" style="background-color:#0045ff;"></div>
+                            <div id=hue176 class="colorsquare" style="background-color:#1800ff;"></div>
+                        </div>
+                        <div class="row">
+
+                            <div id=hue192 class="colorsquare" style="background-color:#7800ff;"></div>
+                            <div id=hue208 class="colorsquare" style="background-color:#d800ff;"></div>
+                            <div id=hue224 class="colorsquare" style="background-color:#ff00c9;"></div>
+                            <div id=hue240 class="colorsquare" style="background-color:#ff0069;"></div>
+                        </div>
+                        <div class="row">
+                            <div id=huewhite class="colorsquare" style="background-color:#ffffff;"></div>
+
+                        </div>
+                    </div>
+
+                </div>
+                <div role="tabpanel" class="tab-pane fade" id="speed">
+                    <div class="col-md-4" style="padding-top:20px;">
+                    <div class="list-group">
+                        <a id='speed0' href="#" class="list-group-item list-group-item-success ">Pomaly</a>
+                        <a id='speed1' href="#" class="list-group-item ">Rýchlosť 1</a>
+                        <a id='speed2' href="#" class="list-group-item ">Rýchlosť 2</a>
+                        <a id='speed3' href="#" class="list-group-item ">Rýchlosť 3</a>
+                        <a id='speed4' href="#" class="list-group-item ">Rýchlosť 4</a>
+                        <a id='speed5' href="#" class="list-group-item ">Rýchlosť 5</a>
+                        <a id='speed6' href="#" class="list-group-item list-group-item-danger">Rýchlo </a>
+                    </div>
+                    </div>
+                
+                </div>
+                <div role="tabpanel" class="tab-pane fade" id="light">
+                    <div class="col-md-4" style="padding-top:20px;">
+                    <div class="list-group">
+                        <a id='light0' href="#" class="list-group-item list-group-item-success ">Nízky</a>
+                        <a id='light1' href="#" class="list-group-item ">Jas 1</a>
+                        <a id='light2' href="#" class="list-group-item ">Jas 2</a>
+                        <a id='light3' href="#" class="list-group-item ">Jas 3</a>
+                        <a id='light4' href="#" class="list-group-item ">Jas 4</a>
+                        <a id='light5' href="#" class="list-group-item ">Jas 5</a>
+                        <a id='light6' href="#" class="list-group-item list-group-item-danger">Vysoký</a>
+                    </div>
+                    </div>
+                </div>
+              </div>
+           &copy; 2016 Miroslav Talášek
+        </div>
+        <script>
+        function clickListener(elid,data,myfunc) {
+        	var el = document.getElementById(elid);
+        	el.addEventListener("click", function(e){ 
+        			e.data = data;
+        			myfunc(e); 
+            });
+        }
+        function httpGet(url){
+            var xmlHttp = new XMLHttpRequest();
+            xmlHttp.open("GET", url, true);
+            xmlHttp.send(null);
+        }
+        
+        function setMode(e){
+           httpGet('/cmd?mode=' + e.data.param1);
+        }
+        function setReset(e){
+           httpGet('/cmd?reset=1');
+        }
+        function setSpeed(e){
+           httpGet('/cmd?speed=' + e.data.param1);
+        }
+        function setLight(e){
+           httpGet('/cmd?light=' + e.data.param1);
+        }
+        function setColor(e){
+           httpGet('/cmd?hue=' + e.data.param1 + "&saturation=" +  e.data.param2);
+        }
+        
+        clickListener("mode4",{param1:'4'},setMode);
+        clickListener("mode1",{param1:'1'},setMode);
+        clickListener("mode2",{param1:'2'},setMode);
+        clickListener("mode3",{param1:'3'},setMode);
+        clickListener("reset",{},setReset);
+        
+        clickListener("speed0",{param1:'0'},setSpeed);
+        clickListener("speed1",{param1:'1'},setSpeed);
+        clickListener("speed2",{param1:'2'},setSpeed);
+        clickListener("speed3",{param1:'3'},setSpeed);
+        clickListener("speed4",{param1:'4'},setSpeed);
+        clickListener("speed5",{param1:'5'},setSpeed);
+        clickListener("speed6",{param1:'6'},setSpeed);
+        clickListener("light0",{param1:'10'},setLight);
+        clickListener("light1",{param1:'30'},setLight);
+        clickListener("light2",{param1:'50'},setLight);
+        clickListener("light3",{param1:'80'},setLight);
+        clickListener("light4",{param1:'100'},setLight);
+        clickListener("light5",{param1:'150'},setLight);
+        clickListener("light6",{param1:'200'},setLight);
+        
+        clickListener("hue000",{param1:"0", param2: "255"},setColor);
+        clickListener("hue016",{param1:"16", param2: "255"},setColor);
+        clickListener("hue032",{param1:"32", param2: "255"},setColor);
+        clickListener("hue048",{param1:"48", param2: "255"},setColor);
+        clickListener("hue064",{param1:"64", param2: "255"},setColor);
+        clickListener("hue080",{param1:"80", param2: "255"},setColor);
+        clickListener("hue096",{param1:"96", param2: "255"},setColor);
+        clickListener("hue112",{param1:"112", param2: "255"},setColor);
+        clickListener("hue128",{param1:"128", param2: "255"},setColor);
+        clickListener("hue144",{param1:"144", param2: "255"},setColor);
+        clickListener("hue160",{param1:"160", param2: "255"},setColor);
+        clickListener("hue176",{param1:"176", param2: "255"},setColor);
+        clickListener("hue192",{param1:"192", param2: "255"},setColor);
+        clickListener("hue208",{param1:"208", param2: "255"},setColor);
+        clickListener("hue224",{param1:"224", param2: "255"},setColor);
+        clickListener("hue240",{param1:"240", param2: "255"},setColor);
+        clickListener("huewhite",{param1:"0", param2: "0"},setColor);
+   </script>
+    
+    </body>
+</html>
