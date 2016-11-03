@@ -118,67 +118,76 @@
 
         </div>
         <script type='text/javascript'>
-             function setMode(e){
-
-                $.get('/cmd?mode=' + e.data.param1);
-             }
-             function setReset(e){
-
-                $.get('/cmd?reset=1');
-             }
-
-             function setSpeed(e){
-
-                $.get('/cmd?speed=' + e.data.param1);
-             }
-             function setLight(e){
-
-                $.get('/cmd?light=' + e.data.param1);
-             }
-             function setColor(e){
-
-                $.get('/cmd?hue=' + e.data.param1 + "&saturation=" +  e.data.param2);
-             }
-
-             $("#mode4").click({param1:'4'},setMode);
-             $("#mode1").click({param1:'1'},setMode);
-             $("#mode2").click({param1:'2'},setMode);
-             $("#mode3").click({param1:'3'},setMode);
-             $("#reset").click(setReset);
-             
-             $("#speed0").click({param1:'0'},setSpeed);
-             $("#speed1").click({param1:'1'},setSpeed);
-             $("#speed2").click({param1:'2'},setSpeed);
-             $("#speed3").click({param1:'3'},setSpeed);
-             $("#speed4").click({param1:'4'},setSpeed);
-             $("#speed5").click({param1:'5'},setSpeed);
-             $("#speed6").click({param1:'6'},setSpeed);
-
-             $("#light0").click({param1:'10'},setLight);
-             $("#light1").click({param1:'30'},setLight);
-             $("#light2").click({param1:'50'},setLight);
-             $("#light3").click({param1:'80'},setLight);
-             $("#light4").click({param1:'100'},setLight);
-             $("#light5").click({param1:'150'},setLight);
-             $("#light6").click({param1:'200'},setLight);
-           
-             $("#hue000").click({param1:"0", param2: "255"},setColor);
-             $("#hue016").click({param1:"16", param2: "255"},setColor);
-             $("#hue032").click({param1:"32", param2: "255"},setColor);
-             $("#hue048").click({param1:"48", param2: "255"},setColor);
-             $("#hue064").click({param1:"64", param2: "255"},setColor);
-             $("#hue080").click({param1:"80", param2: "255"},setColor);
-             $("#hue096").click({param1:"96", param2: "255"},setColor);
-             $("#hue112").click({param1:"112", param2: "255"},setColor);
-             $("#hue128").click({param1:"128", param2: "255"},setColor);
-             $("#hue144").click({param1:"144", param2: "255"},setColor);
-             $("#hue160").click({param1:"160", param2: "255"},setColor);
-             $("#hue176").click({param1:"176", param2: "255"},setColor);
-             $("#hue192").click({param1:"192", param2: "255"},setColor);
-             $("#hue208").click({param1:"208", param2: "255"},setColor);
-             $("#hue224").click({param1:"224", param2: "255"},setColor);
-             $("#hue240").click({param1:"240", param2: "255"},setColor);
-             $("#huewhite").click({param1:"0", param2: "0"},setColor);
+                   
+        function clickListener(elid,data,myfunc) {
+        	var el = document.getElementById(elid);
+        	el.addEventListener("click", function(e){ 
+        			e.data = data;
+        			myfunc(e); 
+            });
+        }
+        function httpGet(url){
+            var xmlHttp = new XMLHttpRequest();
+            xmlHttp.open("GET", url, true);
+            xmlHttp.send(null);
+        }
+        
+        function setMode(e){
+           httpGet('/cmd?mode=' + e.data.param1);
+        }
+        function setReset(e){
+           httpGet('/cmd?reset=1');
+        }
+        function setSpeed(e){
+           httpGet('/cmd?speed=' + e.data.param1);
+        }
+        function setLight(e){
+           httpGet('/cmd?light=' + e.data.param1);
+        }
+        function setColor(e){
+           httpGet('/cmd?hue=' + e.data.param1 + "&saturation=" +  e.data.param2);
+        }
+        
+        
+        
+        clickListener("#mode4",{param1:'4'},setMode);
+        clickListener("#mode1",{param1:'1'},setMode);
+        clickListener("#mode2",{param1:'2'},setMode);
+        clickListener("#mode3",{param1:'3'},setMode);
+        clickListener("#reset",{},setReset);
+        
+        clickListener("#speed0",{param1:'0'},setSpeed);
+        clickListener("#speed1",{param1:'1'},setSpeed);
+        clickListener("#speed2",{param1:'2'},setSpeed);
+        clickListener("#speed3",{param1:'3'},setSpeed);
+        clickListener("#speed4",{param1:'4'},setSpeed);
+        clickListener("#speed5",{param1:'5'},setSpeed);
+        clickListener("#speed6",{param1:'6'},setSpeed);
+        clickListener("#light0",{param1:'10'},setLight);
+        clickListener("#light1",{param1:'30'},setLight);
+        clickListener("#light2",{param1:'50'},setLight);
+        clickListener("#light3",{param1:'80'},setLight);
+        clickListener("#light4",{param1:'100'},setLight);
+        clickListener("#light5",{param1:'150'},setLight);
+        clickListener("#light6",{param1:'200'},setLight);
+        
+        clickListener("#hue000",{param1:"0", param2: "255"},setColor);
+        clickListener("#hue016",{param1:"16", param2: "255"},setColor);
+        clickListener("#hue032",{param1:"32", param2: "255"},setColor);
+        clickListener("#hue048",{param1:"48", param2: "255"},setColor);
+        clickListener("#hue064",{param1:"64", param2: "255"},setColor);
+        clickListener("#hue080",{param1:"80", param2: "255"},setColor);
+        clickListener("#hue096",{param1:"96", param2: "255"},setColor);
+        clickListener("#hue112",{param1:"112", param2: "255"},setColor);
+        clickListener("#hue128",{param1:"128", param2: "255"},setColor);
+        clickListener("#hue144",{param1:"144", param2: "255"},setColor);
+        clickListener("#hue160",{param1:"160", param2: "255"},setColor);
+        clickListener("#hue176",{param1:"176", param2: "255"},setColor);
+        clickListener("#hue192",{param1:"192", param2: "255"},setColor);
+        clickListener("#hue208",{param1:"208", param2: "255"},setColor);
+        clickListener("#hue224",{param1:"224", param2: "255"},setColor);
+        clickListener("#hue240",{param1:"240", param2: "255"},setColor);
+        clickListener("#huewhite",{param1:"0", param2: "0"},setColor);
 
 
 
