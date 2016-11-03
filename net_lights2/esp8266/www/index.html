@@ -7,7 +7,7 @@
         <style>
 
 		html { font-family: sans-serif; }
-		body { margin: 0px; width:400px; }
+		body { margin: 0px; width:350px; }
 		article, aside, details, figcaption, figure, footer, header, hgroup, main, menu, nav, section, summary { display: block; }
 		audio, canvas, progress, video { display: inline-block; vertical-align: baseline; }
 		audio:not([controls]) { display: none; height: 0px; }
@@ -125,7 +125,7 @@
 		.btn-group-vertical > .btn.active, .btn-group-vertical > .btn:active, .btn-group-vertical > .btn:focus, .btn-group-vertical > .btn:hover, .btn-group > .btn.active, .btn-group > .btn:active, .btn-group > .btn:focus, .btn-group > .btn:hover { z-index: 2; }
 		.nav { padding-left: 0px; margin-bottom: 0px; list-style: none; }
 		.nav > li { position: relative; display: block; }
-		.nav > li > a { position: relative; display: block; padding: 10px 15px; }
+		.nav > li > a { position: relative; display: block; padding: 8px 12px; }
 		.nav > li > a:focus, .nav > li > a:hover { text-decoration: none; background-color: rgb(238, 238, 238); }
 		.nav > li.disabled > a { color: rgb(119, 119, 119); }
 		.nav > li.disabled > a:focus, .nav > li.disabled > a:hover { color: rgb(119, 119, 119); text-decoration: none; cursor: not-allowed; background-color: transparent; }
@@ -224,10 +224,10 @@ function makeTabs(selector1,selector2) {
                 divs[i].className = "tab-pane fade";
             }
            for (i = 0; i < tab_lists_anchors.length; i++) {
-                tab_lists_anchors[i].classList.remove("active");
+                tab_lists_anchors[i].parentElement.classList.remove("active");
             }
             clicked_tab = e.target || e.srcElement;
-            clicked_tab.classList.add('active');
+            clicked_tab.parentElement.classList.add('active');
             div_to_show = clicked_tab.getAttribute('href');
             document.querySelector(div_to_show).className = "tab-pane fade in active";
         });
@@ -248,6 +248,7 @@ window.addEventListener("load", function() {
                 <li role="presentation"><a href="#color" aria-controls="color" role="tab" data-toggle="tab">Farba</a></li>
                 <li role="presentation"><a href="#speed" aria-controls="speed" role="tab" data-toggle="tab">Rýchlosť</a></li>
                 <li role="presentation"><a href="#light" aria-controls="light" role="tab" data-toggle="tab">Jas</a></li>
+                <li role="presentation"><a href="#setup" aria-controls="setup" role="tab" data-toggle="tab">N.</a></li>
             </ul>
 
             <div class="tab-content">
@@ -327,6 +328,16 @@ window.addEventListener("load", function() {
                     </div>
                     </div>
                 </div>
+                <div role="tabpanel" class="tab-pane fade" id="setup">
+                    <div class="col-md-4" style="padding-top:20px;">
+                    <div class="list-group">
+                        <input style="width:200px" id='passwd' name="Nové heslo" >
+                        <a id='savesetup' href="#" class="list-group-item ">Uložit</a>
+                    </div>
+                    </div>
+                
+                </div>
+
               </div>
            &copy; 2016 Miroslav Talášek
         </div>
@@ -359,7 +370,13 @@ window.addEventListener("load", function() {
         function setColor(e){
            httpGet('/cmd?hue=' + e.data.param1 + "&saturation=" +  e.data.param2);
         }
-        
+        function setup(e){
+
+            httpGet('/setup?passwd=' + document.getElementById('passwd').value);
+        }
+
+        clickListener("savesetup",{},setup);
+
         clickListener("mode4",{param1:'4'},setMode);
         clickListener("mode1",{param1:'1'},setMode);
         clickListener("mode2",{param1:'2'},setMode);

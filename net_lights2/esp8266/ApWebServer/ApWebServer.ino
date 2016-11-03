@@ -33,6 +33,7 @@
 #include <ESP8266WiFi.h>
 #include <WiFiClient.h> 
 #include <ESP8266WebServer.h>
+#include <EEPROM.h>
 #include "index.h"
 
 /* Set these to your desired credentials. */
@@ -48,7 +49,12 @@ void handleRoot() {
   server.sendHeader("Content-Encoding", "gzip");
 	server.send_P(200, "text/html",index_page, sizeof(index_page) );
 }
+void handleSetup(){
 
+Serial.print("/setup ");
+Serial.println(server.arg(0));
+server.send(200,"text/plain","");
+}
 
 void handleCmd(){
         // 0x00 0x00 0x00 - reset
@@ -80,6 +86,7 @@ void setup() {
 	//Serial.println(myIP);
 	server.on("/", handleRoot);
 	server.on("/cmd",handleCmd);
+  server.on("/setup",handleSetup);
   server.onNotFound(handleNotFound);
 	server.begin();
 	//Serial.println("HTTP server started");
