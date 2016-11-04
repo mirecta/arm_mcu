@@ -50,7 +50,7 @@
 		html { font-size: 10px; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); }
 		body { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; font-size: 14px; line-height: 1.42857; color: rgb(51, 51, 51); background-color: rgb(255, 255, 255); }
 		button, input, select, textarea { font-family: inherit; font-size: inherit; line-height: inherit; }
-		a { color: rgb(51, 122, 183); text-decoration: none; }
+        a { color: rgb(51, 122, 183); text-decoration: none; }
 		a:focus, a:hover { color: rgb(35, 82, 124); text-decoration: underline; }
 		a:focus { outline: -webkit-focus-ring-color auto 5px; outline-offset: -2px; }
 		figure { margin: 0px; }
@@ -248,7 +248,7 @@ window.addEventListener("load", function() {
                 <li role="presentation"><a href="#color" aria-controls="color" role="tab" data-toggle="tab">Farba</a></li>
                 <li role="presentation"><a href="#speed" aria-controls="speed" role="tab" data-toggle="tab">Rýchlosť</a></li>
                 <li role="presentation"><a href="#light" aria-controls="light" role="tab" data-toggle="tab">Jas</a></li>
-                <li role="presentation"><a href="#setup" aria-controls="setup" role="tab" data-toggle="tab">N.</a></li>
+                <li role="presentation"><a href="#setup" aria-controls="setup" role="tab" data-toggle="tab">&#x2638;</a></li>
             </ul>
 
             <div class="tab-content">
@@ -331,15 +331,16 @@ window.addEventListener("load", function() {
                 <div role="tabpanel" class="tab-pane fade" id="setup">
                     <div class="col-md-4" style="padding-top:20px;">
                     <div class="list-group">
-                        <input style="width:200px" id='passwd' name="Nové heslo" >
-                        <a id='savesetup' href="#" class="list-group-item ">Uložit</a>
+                        <div class="list-group-item list-group-item-success" >Zmena hesla (8-20 znakov) </div>
+                        <input class="list-group-item" style="width:290px;" id='passwd' name="Nové heslo" />
+                        <button id='savesetup' style="display:none;"  type="button" class="list-group-item">Uložit</button>
                     </div>
                     </div>
                 
                 </div>
 
               </div>
-           &copy; 2016 Miroslav Talášek
+              <div style="padding-top:20px;">&copy; 2016 Miroslav Talášek</div>
         </div>
         <script>
         function clickListener(elid,data,myfunc) {
@@ -372,8 +373,23 @@ window.addEventListener("load", function() {
         }
         function setup(e){
 
-            httpGet('/setup?passwd=' + document.getElementById('passwd').value);
+            var el = e.target || e.srcElement;
+            if (el.disabled != true){
+              httpGet('/setup?passwd=' + document.getElementById('passwd').value);
+            }
         }
+
+        document.getElementById('passwd').addEventListener('input' ,  function(e){
+            
+            var el = document.getElementById('savesetup');
+            var el_i = e.target || e.srcElement;
+            if(el_i.value.length  >= 8 && el_i.value.length <= 20)
+            {
+              el.style.display = "block";
+            }else{
+              el.style.display = "none";
+            }
+        });
 
         clickListener("savesetup",{},setup);
 

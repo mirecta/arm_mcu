@@ -36,9 +36,11 @@
 #include <EEPROM.h>
 #include "index.h"
 
+int factorypin = 14;
+
 /* Set these to your desired credentials. */
-const char *ssid = "Stromcek";
-const char *password = "treetree";
+const char ssid[] = "Stromcek";
+const char def_password[] = "treetree";
 
 ESP8266WebServer server(80);
 
@@ -46,14 +48,42 @@ ESP8266WebServer server(80);
  * connected to this access point to see it.
  */
 void handleRoot() {
-  server.sendHeader("Content-Encoding", "gzip");
+  server.sendHeader("Content-Encoding", "deflate");
 	server.send_P(200, "text/html",index_page, sizeof(index_page) );
 }
-void handleSetup(){
 
-Serial.print("/setup ");
-Serial.println(server.arg(0));
-server.send(200,"text/plain","");
+void writeEEPROM(const char *passwd){
+   int addr = 0;
+   while(passwd[addr] != '\0'){
+    EEPROM.write(addr, passwd[addr]);
+    ++addr;
+   }
+   EEPROM.write(addr, '\0');
+   EEPROM.commit();    
+}
+
+void readEEPROM(char *passwd){
+  
+  int addr = 0;
+  char val;
+   do{
+    val = EEPROM.read(addr);
+    passwd[addr] = val;
+    ++addr;
+   }while(val != '\0');
+      
+}
+
+void handleSetup(){
+ String pwd = server.arg(0);
+ //Serial.print("/setup ");
+ //Serial.println(pwd);
+ 
+ if(pwd.length() >= 8 && pwd.length() <= 20){
+     writeEEPROM(pwd.c_str());
+     ESP.restart();
+ }
+ server.send(200,"text/plain","");
 }
 
 void handleCmd(){
@@ -74,11 +104,24 @@ void handleNotFound(){
 }
 
 void setup() {
+
+  char password[21];
+  
+  EEPROM.begin(21);
+  pinMode(factorypin, INPUT);
+
+  if (digitalRead(factorypin) == 1){
+    writeEEPROM(def_password);
+  }
+
+  readEEPROM(password);
+  
 	delay(1000);
 	Serial.begin(115200);
 	//Serial.println();
 	//Serial.print("Configuring access point...");
 	/* You can remove the password parameter if you want the AP to be open. */
+  
 	WiFi.softAP(ssid, password);
 
 	IPAddress myIP = WiFi.softAPIP();
