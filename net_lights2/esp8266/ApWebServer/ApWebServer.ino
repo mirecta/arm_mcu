@@ -33,10 +33,15 @@
 #include <ESP8266WiFi.h>
 #include <WiFiClient.h> 
 #include <ESP8266WebServer.h>
+#include <DNSServer.h>
 #include <EEPROM.h>
 #include "index.h"
 
 int factorypin = 14;
+
+const byte DNS_PORT = 53;
+
+DNSServer dnsServer;
 
 /* Set these to your desired credentials. */
 const char ssid[] = "Stromcek";
@@ -92,10 +97,13 @@ void handleCmd(){
         // 0x02 0xSS 0x00 - set speed  (0 - 8)
         // 0x03 0xHH 0xSS - set color hue HH sat SS
         // 0x04 0xLL 0x00 - set max lightness
+char data[3] = {0x00,0x00,0x00};
 
+String cmd = server.argName(0);
 
-Serial.print("/cmd ");
-Serial.println(server.argName(0));
+//Serial.print("/cmd ");
+//Serial.println(server.argName(0));
+Serrial.write(cmd,3);
 server.send(200,"text/plain","");
 }
 
@@ -125,6 +133,20 @@ void setup() {
 	WiFi.softAP(ssid, password);
 
 	IPAddress myIP = WiFi.softAPIP();
+	//setup dns
+  // modify TTL associated  with the domain name (in seconds)
+  // default is 60 seconds
+  dnsServer.setTTL(1200);
+  // set which return code will be used for all other domains (e.g. sending
+  // ServerFailure instead of NonExistentDomain will reduce number of queries
+  // sent by clients)
+  // default is DNSReplyCode::NonExistentDomain
+  dnsServer.setErrorReplyCode(DNSReplyCode::ServerFailure);
+  // start DNS server for a specific domain name
+  dnsServer.start(DNS_PORT, "stromcek.sk", myIP);
+
+
+	
 	//Serial.print("AP IP address: ");
 	//Serial.println(myIP);
 	server.on("/", handleRoot);
@@ -136,5 +158,6 @@ void setup() {
 }
 
 void loop() {
+  dnsServer.processNextRequest();
 	server.handleClient();
 }
