@@ -3,17 +3,17 @@
 
 #include <libopencm3/stm32/rcc.h>
 #include <libopencm3/stm32/gpio.h>
+#include <libopencm3/stm32/usart.h>
+#include <libopencm3/cm3/nvic.h>
+
 #include <stdlib.h>
 #include <stdio.h>
+
+
 
 #include "ws2811.h"
 
 
-//ethernet magic
-#include "net/enc28j60.h"
-#include "net/net.h"
-#include "net/ip_arp_udp_tcp.h"
-#include "net/spi.h"
 
 
 #define COLOR_COUNT 9
@@ -26,6 +26,10 @@ uint8_t speed = 0;
 const uint16_t setSpeed[SPEED_MAX+1] = {10,15,30,50,100,200,500,1000,2000};
 uint8_t updown[LED_COUNT];
 uint8_t colorIndex = 8;
+int recvfakecount = 0;
+volatile static uint8_t recvcmd[3];
+volatile static uint8_t recvindex = 0;
+
 
 struct SetColor_t{
     uint8_t hue;
@@ -76,6 +80,7 @@ void delay( const uint32_t loop){
 
 }
 
+void handle_serial(void);
 
 void clock_setup(void){
     rcc_clock_setup_in_hse_8mhz_out_72mhz();
@@ -83,13 +88,17 @@ void clock_setup(void){
     //buttons
     rcc_periph_clock_enable(RCC_GPIOC);
 
+	rcc_periph_clock_enable(RCC_GPIOA);
+	rcc_periph_clock_enable(RCC_AFIO);
+	rcc_periph_clock_enable(RCC_USART1);
+
 }
 
 void gpio_setup(void){
 
 
-    gpio_set_mode(GPIOE, GPIO_MODE_OUTPUT_50_MHZ,
-                          GPIO_CNF_OUTPUT_PUSHPULL, GPIO5|GPIO6);
+    gpio_set_mode(GPIOC, GPIO_MODE_OUTPUT_50_MHZ,
+                          GPIO_CNF_OUTPUT_PUSHPULL, GPIO13);
 
 
 
@@ -102,36 +111,66 @@ void gpio_setup(void){
 
 }
 
+static void usart_setup(void){
+	/* Enable the USART1 interrupt. */
+	nvic_enable_irq(NVIC_USART1_IRQ);
 
-void handleEthernet(void);
+	/* Setup GPIO pin GPIO_USART1_RE_TX on GPIO port B for transmit. */
+	//gpio_set_mode(GPIOA, GPIO_MODE_OUTPUT_50_MHZ,
+	//	      GPIO_CNF_OUTPUT_ALTFN_PUSHPULL, GPIO_USART1_TX);
 
-static unsigned char mymac[6] = {0x54,0x55,0x58,0x10,0x00,0x24};
-static unsigned char myip[4] = {192,168,1,252};
-#define BUFFER_SIZE 1500//400
-static unsigned char buf[BUFFER_SIZE+1];
+	/* Setup GPIO pin GPIO_USART1_RE_RX on GPIO port B for receive. */
+	gpio_set_mode(GPIOA, GPIO_MODE_INPUT,
+		      GPIO_CNF_INPUT_FLOAT, GPIO_USART1_RX);
+
+	/* Setup UART parameters. */
+	usart_set_baudrate(USART1, 115200);
+	usart_set_databits(USART1, 8);
+	usart_set_stopbits(USART1, USART_STOPBITS_1);
+	usart_set_parity(USART1, USART_PARITY_NONE);
+	usart_set_flow_control(USART1, USART_FLOWCONTROL_NONE);
+	usart_set_mode(USART1, USART_MODE_RX);
+
+	/* Enable USART1 Receive interrupt. */
+	USART_CR1(USART1) |= USART_CR1_RXNEIE;
+
+	/* Finally enable the USART. */
+	usart_enable(USART1);
+}
+
+
+void usart1_isr(void){
+
+    static uint8_t rx;
+
+	if (((USART_CR1(USART1) & USART_CR1_RXNEIE) != 0) &&
+			((USART_SR(USART1) & USART_SR_RXNE) != 0)) {
+		gpio_toggle(GPIOC, GPIO13);
+
+        if (recvindex < 3){
+            rx = usart_recv(USART1);
+            recvcmd[recvindex] = rx;
+            recvindex++;
+        }
+	}
+}
+
 
 int main(void){
 
 #if defined(ENABLE_SEMIHOSTING) && (ENABLE_SEMIHOSTING)
         initialise_monitor_handles();
 #endif
-
+    delay(300000);
     resetColors();
     clock_setup();
     gpio_setup();
-    gpio_set(GPIOE, GPIO5);
+    gpio_set(GPIOC, GPIO13);
 
+    usart_setup();
     // init led strip in HSV mode
     ws2811Init(1);
 
-    //init ethernet
-    ENC28J60_SPI_Init();
-
-    enc28j60Init(mymac);
-    init_ip_arp_udp_tcp(mymac,myip,80);
-
-    enc28j60PhyWrite(PHLCON,0x7a4);
-    enc28j60clkout(2); // change clkout from 6.25MHz to 12.5MHz
 
 
 
@@ -212,8 +251,9 @@ int main(void){
             while(!ws2811IsReady());
             ws2811Sync();
         }
-        handleEthernet();
-
+        //handleEthernet();
+        //handle serial buffer
+        handle_serial();
     }
 
 
@@ -226,7 +266,78 @@ int main(void){
 // 0x04 0xLL 0x00 - set max lightness
 
 
-void handleEthernet(void){
+void handle_serial(void){
+    if (recvindex == 3){
+
+            switch(recvcmd[0]){
+
+                case 0x00: // reset to defaults
+                    resetColors();
+                    colorIndex = 8;
+                    mode = 2;
+                    maxL = 30;
+                    speed = 0;
+                    //reset L
+                    for(int i = 0; i < LED_COUNT; ++i)
+                        line[i].c = rand() % maxL;
+                    
+                    break;
+
+                case 0x01: // set mode
+                    if (recvcmd[1] <= MODE_MAX)
+                        mode = recvcmd[1];
+                    if (mode == 2 || mode == 1){
+                        for(int i = 0; i < LED_COUNT; ++i)
+                            line[i].c = rand() % maxL;
+
+                    }
+                            
+                    break;
+
+                case 0x02: //set speed
+                    if (recvcmd[1] <= SPEED_MAX)
+                        speed = recvcmd[1];
+                    break;
+
+                case 0x03: //set color
+                    ++colorIndex;
+
+                    if (colorIndex >= COLOR_COUNT)
+                        colorIndex = 0;
+
+                    setColor[colorIndex].hue = recvcmd[1];
+                    setColor[colorIndex].saturation = recvcmd[2];
+                    break;
+
+                case 0x04: //set maxL
+                    maxL = recvcmd[1];
+                   
+                    if (mode == 2 || mode == 1){
+                        for(int i = 0; i < LED_COUNT; ++i)
+                            line[i].c = rand() % maxL;
+
+                    }
+                    
+                    
+                    break;
+
+                default:
+                    //prd
+                    break;
+
+
+            }
+     //ready for new data
+     recvindex = 0;
+    }else if (recvindex != 0){
+        recvfakecount++;
+        if (recvfakecount == 100){
+            recvindex = 0;
+            recvfakecount = 0;
+        }
+    }
+}
+/*void handleEthernet(void){
 
     unsigned int plen = 0;
     unsigned char payloadlen=0;
@@ -234,7 +345,6 @@ void handleEthernet(void){
     plen = enc28j60PacketReceive(BUFFER_SIZE, buf);
 
 
-    /*plen will ne unequal to zero if there is a valid packet (without crc error) */
     if(plen==0)
     {
         return;
@@ -337,7 +447,7 @@ void handleEthernet(void){
         return;
     }
 }
-
+*/
 
 
 

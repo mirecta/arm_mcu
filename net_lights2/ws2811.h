@@ -4,7 +4,7 @@
 
 
 //https://github.com/Daedaluz/stm32-ws2811/blob/master/src/ws2811.c
-#define LED_COUNT 100
+#define LED_COUNT 3
 
 
 

@@ -100,10 +100,24 @@ void handleCmd(){
 char data[3] = {0x00,0x00,0x00};
 
 String cmd = server.argName(0);
-
+if (cmd == "mode"){
+  data[0] = 0x01;
+  data[1] =  server.arg(0).toInt();
+}else if (cmd == "speed"){
+  data[0] = 0x02;
+  data[1] =  server.arg(0).toInt();
+}else if (cmd == "light"){
+  data[0] = 0x04;
+  data[1] =  server.arg(0).toInt(); 
+}else if (cmd == "hue"){
+  data[0] = 0x03;
+  data[1] =  server.arg(0).toInt();
+  data[2] =  server.arg(1).toInt();
+}
 //Serial.print("/cmd ");
 //Serial.println(server.argName(0));
-Serrial.write(cmd,3);
+Serial.write(data,3);
+Serial.flush();
 server.send(200,"text/plain","");
 }
 

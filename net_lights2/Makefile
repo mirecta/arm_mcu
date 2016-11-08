@@ -19,11 +19,11 @@
 
 BINARY = leds
 
-OBJS = ws2811.o net/enc28j60.o net/ip_arp_udp_tcp.o net/spi.o
+OBJS = ws2811.o 
 
 
 
-LDFLAGS = -L net
+LDFLAGS = 
 
 
 include Makefile.include
