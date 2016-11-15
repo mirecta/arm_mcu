@@ -132,7 +132,7 @@ void setup() {
   EEPROM.begin(21);
   pinMode(factorypin, INPUT);
 
-  if (digitalRead(factorypin) == 1){
+  if (digitalRead(factorypin) == 0){
     writeEEPROM(def_password);
   }
 
