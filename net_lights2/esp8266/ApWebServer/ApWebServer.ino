@@ -143,6 +143,10 @@ void setup() {
 	//Serial.println();
 	//Serial.print("Configuring access point...");
 	/* You can remove the password parameter if you want the AP to be open. */
+  ESP.eraseConfig();
+  WiFi.setAutoConnect(false);
+  WiFi.mode(WIFI_AP); // this stops the autoconnect
+
   
 	WiFi.softAP(ssid, password);
 
