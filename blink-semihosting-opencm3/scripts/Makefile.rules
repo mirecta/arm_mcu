@@ -52,7 +52,7 @@ LDSCRIPT	?= $(BINARY).ld
 
 OBJS		+= $(BINARY).o
 
-OPENCM3_DIR := /usr/local/arm-none-eabi/
+OPENCM3_DIR := /home/miro/toolchain/libopencm3
 
 ifeq ($(strip $(OPENCM3_DIR)),)
 # user has not specified the library path, so we try to detect it
@@ -144,6 +144,8 @@ list: $(BINARY).list
 
 images: $(BINARY).images
 flash: $(BINARY).flash
+debug: $(BINARY).debug
+
 
 $(LDSCRIPT):
     ifeq (,$(wildcard $(LDSCRIPT)))
@@ -209,10 +211,19 @@ styleclean: $(STYLECHECKFILES:=.styleclean)
 	@printf "  FLASH  $<\n"
 	$(Q)$(STFLASH) write $(*).bin 0x8000000
 
-%.flash: %.bin
-	@printf "  FLASH   $<\n"
-	# rule for uploading firmware:
-	$(STFLASH) --reset write $(*).bin  0x8000000 
+
+%.flash: %.elf
+	@printf "  GDB   $(*).elf (flash)\n"
+	$(GDB) --batch \
+		   -ex 'target extended-remote $(BMP_PORT)' \
+		   -x scripts/black_magic_probe_flash.scr \
+		   $(*).elf
+%.debug: %.elf
+	@printf "  GDB   $(*).elf (flash)\n"
+	$(GDB) --batch \
+		   -ex 'target extended-remote $(BMP_PORT)' \
+		   -x scripts/black_magic_probe_debug.scr \
+		   $(*).elf
 
 .PHONY: images clean stylecheck styleclean elf bin hex srec list
 

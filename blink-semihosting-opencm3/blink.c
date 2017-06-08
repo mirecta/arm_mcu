@@ -33,13 +33,13 @@ int main(void)
     rcc_clock_setup_in_hse_8mhz_out_72mhz();
     rcc_periph_clock_enable(RCC_GPIOC);
     gpio_set_mode(GPIOC, GPIO_MODE_OUTPUT_2_MHZ,
-            GPIO_CNF_OUTPUT_PUSHPULL, GPIO13);
+            GPIO_CNF_OUTPUT_PUSHPULL, GPIO9);
 #if defined(ENABLE_SEMIHOSTING) && (ENABLE_SEMIHOSTING) 
     initialise_monitor_handles();
 #endif
     while (1)
     {
-        gpio_toggle(GPIOC, GPIO13); /* LED on/off */
+        gpio_toggle(GPIOC, GPIO9); /* LED on/off */
     printf("hello world\n");
         for (i = 0; i < 2400000; i++)    /* Wait a bit. */
             __asm__("nop");

@@ -19,5 +19,5 @@
 
 BINARY = blink
 
-include Makefile.include
+include scripts/Makefile.include
 
