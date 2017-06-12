@@ -190,6 +190,7 @@ $(LDSCRIPT):
 clean:
 	@#printf "  CLEAN\n"
 	$(Q)$(RM) *.o *.d *.elf *.bin *.hex *.srec *.list *.map
+	$(Q)$(RM) $(OBJS)
 
 stylecheck: $(STYLECHECKFILES:=.stylecheck)
 styleclean: $(STYLECHECKFILES:=.styleclean)
@@ -220,7 +221,7 @@ styleclean: $(STYLECHECKFILES:=.styleclean)
 		   $(*).elf
 %.debug: %.elf
 	@printf "  GDB   $(*).elf (flash)\n"
-	$(GDB) --batch \
+	$(GDB) \
 		   -ex 'target extended-remote $(BMP_PORT)' \
 		   -x scripts/black_magic_probe_debug.scr \
 		   $(*).elf

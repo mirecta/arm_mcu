@@ -21,7 +21,8 @@ BINARY = main
 OBJS = mmc.o openfat/direntry.o openfat/fat_core.o openfat/mbr.o openfat/unixlike.o openfat/write.o 
 
 LDFLAGS = -L openfat
-CFLAGS =  -std=c99 
+CFLAGS =  -std=c99 -ggdb
+CXXFLAGS = -ggdb 
 
 include scripts/Makefile.include
 

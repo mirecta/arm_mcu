@@ -31,7 +31,12 @@
 
 #include <stdint.h>
 
+#if defined (__cplusplus)
+extern "C" {
+#endif
+
 #include "blockdev.h"
+
 
 struct mbr_partition {
 	uint8_t bootable;
@@ -59,6 +64,10 @@ struct block_mbr_partition {
  */
 int mbr_partition_init(struct block_mbr_partition *part, 
 			struct block_device *whole, uint8_t part_index);
+
+#if defined (__cplusplus)
+}
+#endif
 
 #endif
 

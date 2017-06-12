@@ -29,6 +29,10 @@
 
 #include <sys/stat.h>
 
+#if defined (__cplusplus)
+extern "C" {
+#endif
+
 #include "openfat/blockdev.h"
 
 /* Forward declarations of private structures. */
@@ -216,5 +220,9 @@ struct fat_vol_handle {
 	uint32_t last_cluster_alloc;
 	struct fat_file_handle cwd;
 };
+
+#if defined (__cplusplus)
+}
+#endif
 
 #endif
