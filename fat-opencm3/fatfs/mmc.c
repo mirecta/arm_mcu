@@ -23,7 +23,7 @@
 
 #include <libopencm3/stm32/gpio.h>
 #include <libopencm3/stm32/spi.h>
-
+#include <string.h>
 #include "diskio.h"
 
 
@@ -73,12 +73,27 @@ static uint8_t spi_readwrite(uint32_t spi, uint8_t data)
 
 }
 
-static void mmc_select()
+/*-----------------------------------------------------------------------*/
+/* Wait for card ready                                                   */
+/*-----------------------------------------------------------------------*/
+
+static
+int wait_ready (	/* 1:Ready, 0:Timeout */
+	UINT wt			/* Timeout [ms] */
+)
 {
-	gpio_clear(mmc.cs_port, mmc.cs_pin);
-	/* Wait for not busy */
-	while(spi_readwrite(mmc.spi, 0xFF) == 0);
+	BYTE d;
+
+
+	Timer2 = wt;
+	do {
+		d = spi_readwrite(mmc.spi, 0xFF);
+		/* This loop takes a time. Insert rot_rdq() here for multitask envilonment. */
+	} while (d != 0xFF && Timer2);	/* Wait for card goes ready or timeout */
+
+	return (d == 0xFF) ? 1 : 0;
 }
+
 
 static void mmc_release()
 {
@@ -87,28 +102,33 @@ static void mmc_release()
 	spi_readwrite(mmc.spi, 0xFF);
 }
 
-static void 
-mmc_write_buffer(const uint8_t *buf, int len)
+static int mmc_select()
 {
-	while(len--)
-		spi_readwrite(mmc.spi, *buf++);
+	gpio_clear(mmc.cs_port, mmc.cs_pin);
+	/* Wait for not busy */
+	if (wait_ready(500)) return 1;	/* Wait for card ready */
+
+	mmc_release();
+    return 0;	/* Timeout */
+
 }
 
 static void 
-mmc_read_buffer(uint8_t *buf, int len)
+mmc_write_buffer(const uint8_t *buff, int len)
 {
 	while(len--)
-		*buf++ = spi_readwrite(mmc.spi, 0xFF);
+		spi_readwrite(mmc.spi, *buff++);
 }
 
-#define TOKEN_START_SINGLE_READ		0xFE
-#define TOKEN_START_MULTI_READ		0xFE
-#define TOKEN_START_SINGLE_WRITE	0xFE
-#define TOKEN_START_MULTI_WRITE		0xFD
-#define TOKEN_STOP_MULTI_WRITE		0xFC
+static void 
+mmc_read_buffer(uint8_t *buff, int len)
+{
+	while(len--)
+		*buff++ = spi_readwrite(mmc.spi, 0xFF);
+}
 
 static int
-mmc_receive_block(uint8_t *buf, int len)
+mmc_receive_block(uint8_t *buff, int len)
 {
 	uint8_t token;
 
@@ -126,11 +146,10 @@ mmc_receive_block(uint8_t *buf, int len)
 	spi_readwrite(mmc.spi, 0xFF);
 
 	return 1;						/* Function succeeded */
-
 }
 
 static int
-mmc_transmit_block(const uint8_t *buf, uint8_t  token)
+mmc_transmit_block(const uint8_t *buff, uint8_t  token)
 {
     uint8_t res;
     /* wait for not busy */
@@ -140,7 +159,7 @@ mmc_transmit_block(const uint8_t *buf, uint8_t  token)
 	spi_readwrite(mmc.spi, token);
 
 	/* Sent data frame */
-	mmc_write_buffer(buf, 512);
+	mmc_write_buffer(buff, 512);
 
 	/* Send dummy CRC bytes */
 	spi_readwrite(mmc.spi, 0xFF);
@@ -157,7 +176,7 @@ mmc_transmit_block(const uint8_t *buf, uint8_t  token)
 static uint8_t
 mmc_command(uint8_t cmd, uint32_t arg)
 {
-	uint8_t buf[6];
+	uint8_t buff[6];
 	uint8_t ret;
 
 	if (cmd & 0x80){
@@ -167,19 +186,19 @@ mmc_command(uint8_t cmd, uint32_t arg)
 	}
 		
 
-	buf[0] = cmd | 0x40;
+	buff[0] = cmd | 0x40;
 	/* argument is packed big-endian */
-	buf[1] = (arg >> 24) & 0xFF;
-	buf[2] = (arg >> 16) & 0xFF;
-	buf[3] = (arg >> 8) & 0xFF;
-	buf[4] = arg & 0xFF;
-        buf[5] = 0x01;  /* Dummy CRC + Stop */
-	if (cmd == CMD0) buf[5] = 0x95; /* Valid CRC for CMD0(0) */
-	if (cmd == CMD8) buf[5] = 0x87; /* Valid CRC for CMD8(0x1AA) */
+	buff[1] = (arg >> 24) & 0xFF;
+	buff[2] = (arg >> 16) & 0xFF;
+	buff[3] = (arg >> 8) & 0xFF;
+	buff[4] = arg & 0xFF;
+        buff[5] = 0x01;  /* Dummy CRC + Stop */
+	if (cmd == CMD0) buff[5] = 0x95; /* Valid CRC for CMD0(0) */
+	if (cmd == CMD8) buff[5] = 0x87; /* Valid CRC for CMD8(0x1AA) */
 
 
 	mmc_select();
-	mmc_write_buffer(buf, sizeof(buf));
+	mmc_write_buffer(buff, sizeof(buff));
 	
 	if (cmd == CMD12) spi_readwrite(mmc.spi, 0xFF);
 
@@ -284,7 +303,7 @@ DSTATUS disk_initialize (
 	if (drv) return STA_NOINIT;			/* Supports only drive 0 */
 
 	if (Stat & STA_NODISK) return Stat;	/* Is card existing in the soket? */
-    return mmc_init(SPI2,PORTB,GPIO12);
+    return mmc_init(SPI2,GPIOB,GPIO12);
 }
 
 /*-----------------------------------------------------------------------*/
@@ -320,17 +339,17 @@ DRESULT disk_read (
 
 	if (count == 1) {	/* Single block read */
 		if (mmc_command(CMD17, sector) == 0)	{ /* READ_SINGLE_BLOCK */
-			if (mmc_receive_block(buf, 512)) {
+			if (mmc_receive_block(buff, 512)) {
 				count = 0;
 			}
 		}
 	}else {				/* Multiple block read */
 		if (mmc_command(CMD18, sector) == 0) {	/* READ_MULTIPLE_BLOCK */
 			do {
-				if (!mmc_receive_block(buf, 512)) {
+				if (!mmc_receive_block(buff, 512)) {
 					break;
 				}
-				buf += 512;
+				buff += 512;
 			} while (--count);
 			mmc_command(CMD12, 0);		/* STOP_TRANSMISSION */
 		}
