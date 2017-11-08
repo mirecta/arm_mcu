@@ -1,10 +1,12 @@
 
 #include "util.h"
-
+#include <Arduino.h>
 
 const uint8_t config0[] = "mode=ap\n";
-const uint8_t config1[] = "ssid=padiiap\n";
-const uint8_t config2[] = "passwd=password\n";
+const uint8_t config1[] = "channel=1\n";
+const uint8_t config2[] = "ssid=padiiap\n";
+const uint8_t config3[] = "passwd=password\n";
+
 
 bool streq(const char* buff1, const char* buff2){
   int len1 = getlen(buff1);
@@ -31,6 +33,17 @@ int getlen(const char* buffer){
     return len;
 }
 
+int scpy(char *src, char *dst, int dsize){
+  int count = getlen(src);
+  if (count >= dsize){
+    count = dsize-1;
+  }
+  dst[count] = '\0';
+  for (int i=0; i < count; ++i){
+    dst[i] = src[i];
+  }
+  return count;
+}
 
 int split(char* buffer, char** strs, const char delimiter, int maxparts){
 
@@ -82,8 +95,8 @@ char* strip(char* buffer){
   return &buffer[i];
 }
 
-int readConfig(SdFatFs& fat){
-  printf(">>>>>>>>\n");
+int readConfig(SdFatFs& fat, Config_t& cfg){
+  
   char buf[128];
   char *parts[2];
   int rd;
@@ -99,27 +112,38 @@ int readConfig(SdFatFs& fat){
     file.write(config0 ,sizeof(config0) - 1);
     file.write(config1 ,sizeof(config1) - 1);
     file.write(config2 ,sizeof(config2) - 1);
+    file.write(config3 ,sizeof(config3) - 1);
     file.close();
   }
-  printf("%d \n",res);
   SdFatFile file = fat.open(CONFIG);
-  memset(buf, 0, sizeof(buf));
+  //memset(buf, 0, sizeof(buf));
+  cfg.ap = false;
+  cfg.channel[0] = '1';
+  cfg.channel[1] = '\0';
   do{
     rd = file.readline(buf,sizeof(buf));
     //int c = getlen(buf);
     int c = split(buf,parts,'=');
     if (c != 2) continue;
     
+    
     if(streq(strip(parts[0]),"mode")){
       if(streq(strip(parts[1]),"ap")){
-        printf("vyrobim ap \n");
+      
+        cfg.ap = true;
       }
     }
+    
+    if(streq(strip(parts[0]),"channel")){
+      scpy(strip(parts[1]), cfg.channel,sizeof(cfg.channel));
+    }
+    
     if(streq(strip(parts[0]),"ssid")){
-      printf ("ESSID bude:'%s'\n",strip(parts[1]));
+      scpy(strip(parts[1]), cfg.ssid,sizeof(cfg.ssid));
+      
     }
     if(streq(strip(parts[0]),"passwd")){
-      printf ("heslo bude:'%s'\n",strip(parts[1]));
+      scpy(strip(parts[1]), cfg.passwd, sizeof(cfg.passwd));
     }
     /*if (c == 2){
       printf(">>>%s<<< >>>%s<<<<\n", strip(parts[0]),strip(parts[1]));
