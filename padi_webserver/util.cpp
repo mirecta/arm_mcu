@@ -1,6 +1,11 @@
 
 #include "util.h"
 
+
+const uint8_t config0[] = "mode=ap\n";
+const uint8_t config1[] = "ssid=padiiap\n";
+const uint8_t config2[] = "passwd=password\n";
+
 bool streq(const char* buff1, const char* buff2){
   int len1 = getlen(buff1);
   int len2 = getlen(buff2);
@@ -16,7 +21,6 @@ bool streq(const char* buff1, const char* buff2){
 }
 
 int getlen(const char* buffer){
-
   //obtain len
     int len = 0;
     char c = buffer[len];
@@ -77,4 +81,54 @@ char* strip(char* buffer){
    }
   return &buffer[i];
 }
+
+int readConfig(SdFatFs& fat){
+  printf(">>>>>>>>\n");
+  char buf[128];
+  char *parts[2];
+  int rd;
+  
+  int res = 0;
+  
+  if(fat.isFile(CONFIG) != 1){
+    res = fat.mkdir(CONFIG_DIR);
+    if (res < 0){
+        return res;
+    }
+    SdFatFile file = fat.open(CONFIG);
+    file.write(config0 ,sizeof(config0) - 1);
+    file.write(config1 ,sizeof(config1) - 1);
+    file.write(config2 ,sizeof(config2) - 1);
+    file.close();
+  }
+  printf("%d \n",res);
+  SdFatFile file = fat.open(CONFIG);
+  memset(buf, 0, sizeof(buf));
+  do{
+    rd = file.readline(buf,sizeof(buf));
+    //int c = getlen(buf);
+    int c = split(buf,parts,'=');
+    if (c != 2) continue;
+    
+    if(streq(strip(parts[0]),"mode")){
+      if(streq(strip(parts[1]),"ap")){
+        printf("vyrobim ap \n");
+      }
+    }
+    if(streq(strip(parts[0]),"ssid")){
+      printf ("ESSID bude:'%s'\n",strip(parts[1]));
+    }
+    if(streq(strip(parts[0]),"passwd")){
+      printf ("heslo bude:'%s'\n",strip(parts[1]));
+    }
+    /*if (c == 2){
+      printf(">>>%s<<< >>>%s<<<<\n", strip(parts[0]),strip(parts[1]));
+    }*/
+  }while (rd != -1);
+  file.close();
+  return res;
+}
+
+
+
 

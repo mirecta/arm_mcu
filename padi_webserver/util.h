@@ -1,5 +1,23 @@
+#include "SdFatFs.h"
+ 
 #ifndef _UTIL_H_
 #define _UTIL_H_
+
+
+
+
+
+#define CONFIG_FILE "device.conf"
+#define CONFIG_DIR "/conf"
+#define CONFIG CONFIG_DIR "/" CONFIG_FILE
+
+
+
+struct Config_t {
+      char  ssid[20];
+      char  passwd[20];
+      bool ap;     
+};
 
 
 int getlen(const char* buffer);
@@ -20,7 +38,7 @@ int split(char* buffer, char** strs, const char delimiter, int maxparts = 2);
 char* strip(char* buffer);
 
 
-
+ int readConfig(SdFatFs& fat);
 
 
 

@@ -1,9 +1,11 @@
 /*
  This sketch shows how to open/close file and perform read/write to it.
  */
-
-#include "SdFatFs.h"
+ #include "SdFatFs.h"
 #include "util.h"
+
+
+
 
 extern "C" {
 void UserPreInit(void)
@@ -14,49 +16,18 @@ void UserPreInit(void)
 }  
 } // extern "C"
 
-char filename[] = "test.txt";
-char write_content[] = "hello world!";
-
 SdFatFs fs;
+Config_t cfg;
+
+
 
 void setup() {
-  char buf[128];
-  char *parts[2];
-  int rd;
-
   fs.begin();
-
+ getlen("ddssds");
   
-  SdFatFile file = fs.open("/conf/device.conf");
-
-  memset(buf, 0, sizeof(buf));
-
-  do{
-    rd = file.readline(buf,sizeof(buf));
-    //int c = getlen(buf);
-    int c = split(buf,parts,'=');
-    if (c != 2) continue;
+ int a = readConfig(fs);
     
-    if(streq(strip(parts[0]),"mode")){
-      if(streq(strip(parts[1]),"ap")){
-        printf("vyrobim ap \n");
-      }
-    }
-    if(streq(strip(parts[0]),"ssid")){
-      printf ("ESSID bude:'%s'\n",strip(parts[1]));
-    }
-    if(streq(strip(parts[0]),"passwd")){
-      printf ("heslo bude:'%s'\n",strip(parts[1]));
-    }
-    /*if (c == 2){
-      printf(">>>%s<<< >>>%s<<<<\n", strip(parts[0]),strip(parts[1]));
-    }*/
-  }while (rd != -1);
-  
-  //file.read(buf, sizeof(buf));
-
-  file.close();
-
+    printf("%d\n",a);
 
   fs.end();
 }
