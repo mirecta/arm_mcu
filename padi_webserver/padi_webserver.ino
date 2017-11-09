@@ -5,8 +5,7 @@
 #include "util.h"
 #include <WiFi.h>
 
-#include <WiFiClient.h>
-#include <ESP8266WebServer.h>
+#include <PadiWebServer.h>
 
 extern "C" {
 void UserPreInit(void)
@@ -21,18 +20,18 @@ SdFatFs fs;
 Config_t cfg;
 int status = WL_IDLE_STATUS;     // the Wifi radio's status
 
-ESP8266WebServer server(80);
+PadiWebServer server(80);
 
-const int led = 13;
+
 
 void handleRoot() {
-  digitalWrite(led, 1);
+  
   server.send(200, "text/plain", "hello from esp8266!");
-  digitalWrite(led, 0);
+  
 }
 
 void handleNotFound(){
-  digitalWrite(led, 1);
+ 
   String message = "File Not Found\n\n";
   message += "URI: ";
   message += server.uri();
@@ -45,7 +44,7 @@ void handleNotFound(){
     message += " " + server.argName(i) + ": " + server.arg(i) + "\n";
   }
   server.send(404, "text/plain", message);
-  digitalWrite(led, 0);
+  
 }
 
 void setup() {
@@ -92,5 +91,6 @@ void setup() {
 
 void loop() {
   server.handleClient();
+  //delay(100);
 
 }
