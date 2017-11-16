@@ -108,14 +108,14 @@ int readConfig(SdFatFs& fat, Config_t& cfg){
     if (res < 0){
         return res;
     }
-    SdFatFile file = fat.open(CONFIG);
+    SdFatFile file = fat.open(CONFIG,"w");
     file.write(config0 ,sizeof(config0) - 1);
     file.write(config1 ,sizeof(config1) - 1);
     file.write(config2 ,sizeof(config2) - 1);
     file.write(config3 ,sizeof(config3) - 1);
     file.close();
   }
-  SdFatFile file = fat.open(CONFIG);
+  SdFatFile file = fat.open(CONFIG,"r");
   //memset(buf, 0, sizeof(buf));
   cfg.ap = false;
   cfg.channel[0] = '1';
