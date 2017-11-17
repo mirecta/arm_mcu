@@ -22,6 +22,15 @@ int status = WL_IDLE_STATUS;     // the Wifi radio's status
 
 PadiWebServer server(80);
 
+void handleCmd(){
+rtl_printf("i am in \n");
+String str = server.arg("plain");
+for(int i = 0; i < str.size(); ++i){
+  rtl_printf(" %d ",str.data()[i]);
+ }
+ rtl_printf("\n");
+server.send(200);
+}
 
 void handleNotFound(){
 
@@ -65,7 +74,7 @@ void setup() {
     // Connect to WPA/WPA2 network:
     status = WiFi.begin(cfg.ssid, cfg.passwd);
     // wait 10 seconds for connection:
-    delay(10000);
+    delay(20000);
   }  
  }
  
@@ -76,7 +85,7 @@ void setup() {
   server.on("/inline", [](){
     server.send(200, "text/plain", "this works as well");
   });
-
+  server.on("/cmd",handleCmd);
   server.onNotFound(handleNotFound);
 
   server.begin();
