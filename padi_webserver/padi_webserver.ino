@@ -29,14 +29,16 @@ for(int i = 0; i < str.size(); ++i){
   rtl_printf(" %d ",str.data()[i]);
  }
  rtl_printf("\n");
-server.send(200);
+server.send(200,"application/octet-stream",str);
 }
 
 void handleNotFound(){
-
-  if(server.serveStatic(fs,"/www/") != -1 )
+  rtl_printf("file %s \n",server.uri().c_str());
+  int st = server.serveStatic(fs,"/www/");
+   rtl_printf("status %d \n", st);
+  if(st != -1 )
         return;
-  String message = "File Not Found\n\n";
+ /* String message = "File Not Found\n\n";
   message += "URI: ";
   message += server.uri();
   message += "\nMethod: ";
@@ -46,19 +48,14 @@ void handleNotFound(){
   message += "\n";
   for (uint8_t i=0; i<server.args(); i++){
     message += " " + server.argName(i) + ": " + server.arg(i) + "\n";
-  }
-  server.send(404, "text/plain", message);
+  }*/
+  server.send(404, "text/plain", "File Not Found\n\n");
   
 }
 
-void setup() {
-  sys_info();
-  fs.begin();
- 
-   WiFi.status(); //this magic init wifi
-   
- readConfig(fs,cfg);
- if (cfg.ap){
+void setupWIFI(){
+  WiFi.status(); //this magic init wifi
+  if (cfg.ap){
    //if(1){
    // attempt to start AP:
   while (status != WL_CONNECTED) {
@@ -76,10 +73,21 @@ void setup() {
     // wait 10 seconds for connection:
     delay(20000);
   }  
- }
- 
   IPAddress ip = WiFi.localIP();
   printf("IP is %s\n ", ip.get_address());
+}
+}
+void setup() {
+  sys_info();
+  fs.begin();
+ 
+   
+   
+ readConfig(fs,cfg);
+ setupWIFI();
+ 
+ 
+  
 
 
   server.on("/inline", [](){
@@ -94,6 +102,11 @@ void setup() {
 
 void loop() {
   server.handleClient();
-  //delay(100);
+  status = WiFi.status();
+  if (status != WL_CONNECTED){
+    rtl_printf("wifi disconnected alert !!! \n");
+  }
+  delay(300);
+  
 
 }
