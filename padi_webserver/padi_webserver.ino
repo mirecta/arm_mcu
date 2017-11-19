@@ -4,6 +4,7 @@
 #include "SdFatFs.h"
 #include "util.h"
 #include <WiFi.h>
+#include "rtl_crypto.h"
 
 #include <PadiWebServer.h>
 
@@ -33,6 +34,9 @@ server.send(200,"application/octet-stream",str);
 }
 
 void handleNotFound(){
+ if(!server.authenticate("test", "passwd"))
+      return server.requestAuthentication(); 
+      
   rtl_printf("file %s \n",server.uri().c_str());
   int st = server.serveStatic(fs,"/www/");
    rtl_printf("status %d \n", st);
@@ -78,6 +82,7 @@ void setupWIFI(){
 }
 }
 void setup() {
+  InitCryptoEngine();
   sys_info();
   fs.begin();
  
