@@ -24,18 +24,22 @@
 #include <libopencm3/stm32/gpio.h>
 #include <libopencm3/cm3/nvic.h>
 #include <libopencm3/cm3/systick.h>
-#include "openfat.h"
-#include "openfat/mbr.h"
 #include <string.h>
 #include <fcntl.h>
 
 #include <assert.h>
 
+#include "fatfs/xprintf.h"
+#include "fatfs/ff.h"
+#include "fatfs/diskio.h"
 
-#include "mmc.h"
+
 
 extern "C" void  initialise_monitor_handles(void);
-static volatile uint32_t time_counter;
+extern "C" void disk_timerproc (void);
+
+FATFS fs;
+
 void hwInit(){
     rcc_clock_setup_in_hse_8mhz_out_72mhz();
     rcc_periph_clock_enable(RCC_GPIOC);
@@ -62,56 +66,41 @@ void hwInit(){
 	/* start counting */
 	systick_counter_enable();
 }
-void print_tree(struct fat_vol_handle *vol, struct fat_file_handle *dir, int nest)
-{
-	struct fat_file_handle subdir;
-	struct dirent ent;
 
-	while(!fat_readdir(dir, &ent)) {
-		if((strcmp(ent.d_name, ".") == 0) || 
-		   (strcmp(ent.d_name, "..") == 0))
-			continue;
 
-		for(int i = 0; i < nest; i++) printf("\t");
-		printf("%s\n", ent.d_name);
+void listDir(char *path){
 
-		if(ent.fat_attr == FAT_ATTR_DIRECTORY) {
-			fat_chdir(vol, ent.d_name);
-			assert(fat_open(vol, ".", 0, &subdir) == 0);
-			print_tree(vol, &subdir, nest + 1);
-			fat_chdir(vol, "..");
-		}
-	}
-
-}
-
-int _write(int fd, char *buf, int len)
-{
-	return len;
+    FRESULT res;
+    DIR dir;
+    UINT i;
+    static FILINFO fno;
+    res = f_opendir(&dir, path);
+    if (res == FR_OK) {
+        for (;;) {
+            res = f_readdir(&dir, &fno);                   /* Read a directory item */
+            if (res != FR_OK || fno.fname[0] == 0) break;  /* Break on error or end of dir */
+                printf("%s\n",fno.fname);
+        }
+        f_closedir(&dir);
+    }
 }
 
 int main(void)
 {
-	struct mmc_port spi2;
-	struct block_mbr_partition part;
-	struct fat_vol_handle vol;
-	struct fat_file_handle file;
 
     hwInit();
 #if defined(ENABLE_SEMIHOSTING) && (ENABLE_SEMIHOSTING) 
     initialise_monitor_handles();
 #endif
-    mmc_init(SPI2, GPIOB, GPIO12, &spi2);
-    mbr_partition_init(&part, (struct block_device *)&(spi2), 0);
-    assert(fat_vol_init((struct block_device *)&part, &vol) == 0);
-assert(fat_open(&vol, ".", 0, &file) == 0);
-   print_tree(&vol, &file,0); 
+
+
+    f_mount(&fs, "", 0);
+    listDir("/");
 
     while (1)
     {
-   print_tree(&vol, &file,0); 
        // gpio_toggle(GPIOC, GPIO9); /* LED on/off */
-    //printf("hello world\n");
+       //printf("hello world\n");
         for (int i = 0; i < 2400000; i++)    /* Wait a bit. */
             __asm__("nop");
     }
@@ -122,15 +111,13 @@ void sys_tick_handler()
 	static int temp32;
 
 	temp32++;
-	time_counter++;
 
-        /* expire timer */
-	if (time_timeout) --time_timeout;
 
 	/* we call this handler every 1ms so 1000ms = 1s on/off */
 	if (temp32 == 1000) {
 		gpio_toggle(GPIOC, GPIO9); /* LED2 on/off */
 		temp32 = 0;
 	}
+    disk_timerproc();
 }
 

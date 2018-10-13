@@ -1,36 +1,30 @@
 
 
-SEMIHOSTING TEST
+FATFS wih sdhc via SPI 
 ================
 
-Semihosting means u can use printf function via stlink to pc
+Makefile using Black Magic Probe 
+
 
 first make
 
 ```
 ENABLE_SEMIHOSTING=1 make
 ```
-
-then run OPENOCD
-
-```
-openocd -f interface/stlink-v2.cfg -f target/stm32f1x.cfg
-```
-
-in other console run gdb
+then flash
 
 ```
-arm-none-eabi-gdb --eval-command="target remote localhost:3333" blink.elf
-```
-in gdb
-
-```
-load
-mon arm semihosting enable
-cont
+BMP_PORT=/dev/ttyACM0 make flash
 ```
 
-now in console with openOCD u can see your printf output :D
+and debug for view semihosting printf
+
+```
+BMP_PORT=/dev/ttyACM0 make debug
+```
+now in console u can see your printf output :D
+
+list main dir in this case
 
 good luck
 
