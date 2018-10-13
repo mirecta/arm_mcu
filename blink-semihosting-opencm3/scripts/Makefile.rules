@@ -207,17 +207,18 @@ styleclean: $(STYLECHECKFILES:=.styleclean)
 	$(Q)rm -f $*.stylecheck;
 
 
-%.stlink-flash: %.bin
+%.flash: %.bin
 	@printf "  FLASH  $<\n"
 	$(Q)$(STFLASH) write $(*).bin 0x8000000
 
 
-%.flash: %.elf
-	@printf "  GDB   $(*).elf (flash)\n"
-	$(GDB) --batch \
-		   -ex 'target extended-remote $(BMP_PORT)' \
-		   -x scripts/black_magic_probe_flash.scr \
-		   $(*).elf
+#%.flash: %.elf
+#	@printf "  GDB   $(*).elf (flash)\n"
+#	$(GDB) --batch \
+#		   -ex 'target extended-remote $(BMP_PORT)' \
+#		   -x scripts/black_magic_probe_flash.scr \
+#		   $(*).elf
+
 %.debug: %.elf
 	@printf "  GDB   $(*).elf (flash)\n"
 	$(GDB) --batch \

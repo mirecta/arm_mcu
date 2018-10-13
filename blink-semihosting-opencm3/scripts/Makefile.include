@@ -38,7 +38,7 @@ BMP_PORT	?=
 
 ################################################################################
 # texane/stlink specific variables
-#STLINK_PORT	?= :4242
+STLINK_PORT	?= :4242
 
 
 include scripts/Makefile.rules
