@@ -1,5 +1,6 @@
 
-
+# Hardware
+Some STM32F103 with USB [STM32MINI](https://lnb-konvertory.heureka.sk/inverto-black-pro-twin-monoblok-23mm-lnb-4_3/#) or [BluePill](https://wiki.stm32duino.com/index.php?title=Blue_Pill)  
 
 # Pins
 * C14 - A
