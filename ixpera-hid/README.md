@@ -13,3 +13,8 @@
 * A6  - Enter
 * A7  - Esc 
 
+
+# Schematics
+![SCH](https://raw.githubusercontent.com/mirecta/arm_mcu/master/ixpera-hid/doc/image.png)
+
+2019 Miroslav Talasek
