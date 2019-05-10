@@ -207,9 +207,9 @@ const struct usb_config_descriptor config = {
 };
 
 static const char *usb_strings[] = {
-	"Black Sphere Technologies",
-	"HID Demo",
-	"DEMO",
+	"IXPERTA",
+	"HID Keyboard",
+	"KEYBOARD 01",
 };
 
 /* Buffer used for control requests. */
