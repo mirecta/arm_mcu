@@ -315,43 +315,43 @@ void read_buttons(void){
 	}
 	i = 0;
 	if(!gpio_get(GPIOC,GPIO14)){
-		buf[2+i] = 0x04; //A
+		buf[2+i] = 0x3a; //F1
 		++i;
 	}
 	if(!gpio_get(GPIOC,GPIO15)){
-		buf[2+i] = 0x05; //B
+		buf[2+i] = 0x3b; //F2
 		++i;
 	}
 	if(!gpio_get(GPIOA,GPIO0)){
-		buf[2+i] = 0x4b; // Page Up
+		buf[2+i] = 0x3c; //F3
 		++i;
 	}
 	if(!gpio_get(GPIOA,GPIO1)){
-		buf[2+i] = 0x4e; // Page Down
+		buf[2+i] = 0x3d; //F4
 		++i;
 	}
 	if(!gpio_get(GPIOA,GPIO2)){
-		buf[2+i] = 0x50; // <
+		buf[2+i] = 0x3e; //F5
 		++i;
 	}
 	if(!gpio_get(GPIOA,GPIO3)){
-		buf[2+i] = 0x4f; // >
+		buf[2+i] = 0x3f; //F6
 		++i;
 	}
 	if(!gpio_get(GPIOA,GPIO4)){
-		buf[2+(i%6)] = 0x52; // ^
+		buf[2+(i%6)] = 0x40; //F7
 		++i;
 	}
 	if(!gpio_get(GPIOA,GPIO5)){
-		buf[2+(i%6)] = 0x51; // v
+		buf[2+(i%6)] = 0x41; //F8
 		++i;
 	}
 	if(!gpio_get(GPIOA,GPIO6)){
-		buf[2+(i%6)] = 0x28; // Enter
+		buf[2+(i%6)] = 0x42; //F9
 		++i;
 	}
 	if(!gpio_get(GPIOA,GPIO7)){
-		buf[2+(i%6)] = 0x29; // ESC
+		buf[2+(i%6)] = 0x43; //F10
 		++i;
 	}
 }
